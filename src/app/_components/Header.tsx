@@ -14,7 +14,7 @@ const navigationItems = [
 ];
 const Header = () => {
   return (
-    <nav className="w-full px-5 md:px-10 lg:pl-[100px] lg:pr-[68px] py-6">
+    <nav className="w-full px-5 md:px-10 lg:px-[100px] py-6">
       <div className="flex items-center justify-between">
         <Link
           href="/"

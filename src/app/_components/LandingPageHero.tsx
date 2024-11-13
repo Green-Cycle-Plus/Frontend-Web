@@ -32,7 +32,7 @@ const LandingPageHero = () => {
       </div>
 
 
-    <Image src="/recycle1.svg" alt="Image" className='w-full md:w[300px] md:h-[250px] lg:w-[428px] lg:h-[374px]' width={0} height={0}/>
+    <Image src="/waste.svg" alt="Image" className='w-full md:w[300px] md:h-[250px] lg:w-[428px] lg:h-[374px]' width={0} height={0}/>
     </div>
   </div>
   )

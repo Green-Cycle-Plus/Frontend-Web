@@ -2,7 +2,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter , DM_Sans, Londrina_Solid} from "next/font/google";
-import { headers } from "next/headers";
+// import { headers } from "next/headers";
 import Header from "./_components/Header";
 
 const inter = Inter({ subsets: ["latin"], variable:"--font-inter" });
