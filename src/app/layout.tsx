@@ -2,7 +2,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter , DM_Sans, Londrina_Solid} from "next/font/google";
-// import { headers } from "next/headers";
 import Header from "./_components/Header";
 
 const inter = Inter({ subsets: ["latin"], variable:"--font-inter" });
@@ -14,8 +13,8 @@ weight:"400",
 });
 
 export const metadata: Metadata = {
-  title: "Nextjs AppKit Starter",
-  description: "AppKit by reown",
+  title: "Green Cycle Plus",
+  description: "Turn your waste into wealth and make the environment and the world a better place for us all to live in recycling one waste at a time",
 };
 
 export default async function RootLayout({
@@ -23,8 +22,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const cookies = await headers();
-  // const cookie = cookies.get("cookie") ?? "";
   return (
     <html lang="en">
       <body className={`${inter.variable} ${dms_sans.variable} ${londrina.className}`}>
