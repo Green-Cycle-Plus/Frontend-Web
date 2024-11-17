@@ -2,10 +2,12 @@ import { Input } from '@/components/ui/input'
 import Image from 'next/image'
 import React from 'react'
 import CategoryCard from './CategoryCard'
+import CompanyCard from './CompanyCard'
 
 const CompanyHero = () => {
     return (
-        <>        <div>
+        <>       
+         <div>
             <section className='bg-gradient-to-r from-[#84E4A8] to-[#497E5DEB] p-10 h-[586px] relative' style={{
               
             }}>
@@ -41,6 +43,10 @@ const CompanyHero = () => {
             </div>
         </div>
         <CategoryCard />
+        <div className='ml-5 mt-10'>
+            <h1 className='text-2xl font-bold'>Recommended Companies</h1>
+        </div>
+        <CompanyCard/>
         </>
 
     )
