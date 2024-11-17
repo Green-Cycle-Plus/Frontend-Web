@@ -72,9 +72,9 @@ const CompanyCard = () => {
         <div className=" max-w-[95%] mx-auto grid grid-cols-1 gap-y-8 sm:gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8 mt-4 sm:mt-8 px-4 sm:px-8 pb-20">
             {
                 companyCard.map((item, index) => (
-                    <div key={index} className='bg-white flex justify-center p-10 rounded-lg '>
-                        <div>
-                            <div className='bg-gradient-to-r from-[#DAFFDA] to-[#237823] px-10 py-2 h-[80px] rounded-lg w-[245.05px] flex justify-end'>
+                    <div key={index} className='bg-white border flex justify-center rounded-lg border-1 border-green-950 '>
+                        <div className='w-full'>
+                            <div className='bg-gradient-to-r pr-4 from-[#DAFFDA] to-[#237823] h-[80px] rounded-lg flex justify-end w-full'>
                                 <img src={item.rate} height={20} width={20} alt='rate' />
                                 <img src={item.rate} height={20} width={20} alt='rate' />
                                 <img src={item.rate} height={20} width={20} alt='rate' />
@@ -83,6 +83,8 @@ const CompanyCard = () => {
                             <div className='ml-5 -mt-10'>
                                 <Image src={item.logo} height={60} width={60} alt='plasctic' className='' />
                             </div>
+                            <div className="p-3">
+
                             <div className='mt-5'>
                                 <h1 className=''>Company: {item.name}</h1>
                                 <h1>Waste Offers: {item.offers}</h1>
@@ -97,9 +99,10 @@ const CompanyCard = () => {
 
                             </div>
                             <div className='mt-5 flex justify-end'>
-                            <button className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors px-7 py-2">
+                            <button className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
                                 View
                             </button>
+                            </div>
                             </div>
                         </div>
 
