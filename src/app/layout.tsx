@@ -1,14 +1,13 @@
-// RootLayout.tsx
+// LandingPageLayout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter , DM_Sans, Londrina_Solid} from "next/font/google";
-import Header from "./_components/Header";
 
 const inter = Inter({ subsets: ["latin"], variable:"--font-inter" });
 const dms_sans = DM_Sans({ subsets: ["latin"], variable:"--font-dms_sans" });
 const londrina = Londrina_Solid({
-variable:"--font-londrina",
-weight:"400",
+  variable:"--font-londrina",
+  weight:"400",
   subsets: ["latin"],
 });
 
@@ -25,10 +24,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${dms_sans.variable} ${londrina.className}`}>
-      <div className="min-h-screen max-w-[1440px] mx-auto bg-[#F8FFF8]">
-        <Header/>
-   {children}
-   </div>
+        {children}
       </body>
     </html>
   );
