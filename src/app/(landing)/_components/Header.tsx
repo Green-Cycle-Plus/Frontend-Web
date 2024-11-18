@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sheet";
 const navigationItems = [
   { name: "Home", href: "/" },
+  { name: "Register as a recycling company", href: "/recyclers/register" },
   { name: "Contact us", href: "/contact" },
   { name: "Blog", href: "/blog" },
 ];
@@ -20,12 +21,15 @@ const Header = () => {
           href="/"
           className="text-4xl font-semibold text-brandGreen font-londrina"
         >
-          Greencycle
+          Greencycle+
         </Link>
 
         <div className="hidden md:flex items-center space-x-8 font-dms_sans">
           <Link href="/" className="text-brandText font-medium">
             Home
+          </Link>
+          <Link href="/recyclers/register" className="text-[#797979] hover:text-gray-900">
+            Register as a recycling company
           </Link>
           <Link href="/contact" className="text-[#797979] hover:text-gray-900">
             Contact us
@@ -35,9 +39,9 @@ const Header = () => {
           </Link>
         </div>
 
-        <button className="hidden md:block bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
+        <Link href="/companyPage" className="hidden md:block bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
           Get started
-        </button>
+        </Link>
 
         {/* Mobile menu button */}
         <div className="md:hidden">

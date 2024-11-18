@@ -75,10 +75,10 @@ const CompanyCard = () => {
                     <div key={index} className='bg-white border flex justify-center rounded-lg border-1 border-[#70B170] '>
                         <div className='w-full'>
                             <div className='bg-gradient-to-r pr-4 from-[#DAFFDA] to-[#237823] h-[80px] rounded-lg flex justify-end w-full'>
-                                <img src={item.rate} height={20} width={20} alt='rate' />
-                                <img src={item.rate} height={20} width={20} alt='rate' />
-                                <img src={item.rate} height={20} width={20} alt='rate' />
-                                <img src={item.rate} height={20} width={20} alt='rate' />
+                                <Image src={item.rate} height={20} width={20} alt='rate' />
+                                <Image src={item.rate} height={20} width={20} alt='rate' />
+                                <Image src={item.rate} height={20} width={20} alt='rate' />
+                                <Image src={item.rate} height={20} width={20} alt='rate' />
                             </div>
                             <div className='ml-5 -mt-10'>
                                 <Image src={item.logo} height={60} width={60} alt='plasctic' className='' />
