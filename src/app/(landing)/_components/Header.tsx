@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sheet";
 const navigationItems = [
   { name: "Home", href: "/" },
+  { name: "Register as a recycling company", href: "/recyclers/register" },
   { name: "Contact us", href: "/contact" },
   { name: "Blog", href: "/blog" },
 ];
