@@ -20,12 +20,15 @@ const Header = () => {
           href="/"
           className="text-4xl font-semibold text-brandGreen font-londrina"
         >
-          Greencycle
+          Greencycle+
         </Link>
 
         <div className="hidden md:flex items-center space-x-8 font-dms_sans">
           <Link href="/" className="text-brandText font-medium">
             Home
+          </Link>
+          <Link href="/recyclers/register" className="text-[#797979] hover:text-gray-900">
+            Register as a recycling company
           </Link>
           <Link href="/contact" className="text-[#797979] hover:text-gray-900">
             Contact us
