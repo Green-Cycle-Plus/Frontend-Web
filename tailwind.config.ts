@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		backgroundImage: {
+			companyDetailsBg: "url('/details-bg.svg')",
+		},
 		fontFamily: {
 			sans: ["var(--font-inter)", "sans-serif"],
 			dms_sans: ["var(--font-dms_sans)", "sans-serif"],
