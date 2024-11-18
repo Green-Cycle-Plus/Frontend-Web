@@ -1,13 +1,12 @@
 'use client'
 
+import { ChevronRight, HelpCircle, MapPin, Shield, Upload } from 'lucide-react'
 import * as React from 'react'
-import { Check, ChevronRight, HelpCircle, MapPin, Shield, Upload } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -18,6 +17,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Select,
   SelectContent,
@@ -31,10 +33,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Progress } from '@/components/ui/progress'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
 
 const steps = [
   'Company Information',
@@ -81,7 +79,7 @@ export default function CompanyProfileWizard() {
     }
   })
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: unknown) => {
     setIsSubmitting(true)
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -222,7 +220,7 @@ export default function CompanyProfileWizard() {
                               key={type.id}
                               control={form.control}
                               name="wasteTypes"
-                              render={({ field }) => {
+                              render={() => {
                                 return (
                                   <FormItem
                                     key={type.id}

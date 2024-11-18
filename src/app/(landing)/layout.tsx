@@ -1,7 +1,8 @@
 // RootLayout.tsx
-import "./globals.css";
+import "../globals.css";
 import type { Metadata } from "next";
 import Header from "./_components/Header";
+
 
 export const metadata: Metadata = {
   title: "Green Cycle Plus || Home",
