@@ -27,6 +27,9 @@ const Header = () => {
           <Link href="/" className="text-brandText font-medium">
             Home
           </Link>
+          <Link href="/recyclers/register" className="text-[#797979] hover:text-gray-900">
+            Register as a recycling company
+          </Link>
           <Link href="/contact" className="text-[#797979] hover:text-gray-900">
             Contact us
           </Link>
