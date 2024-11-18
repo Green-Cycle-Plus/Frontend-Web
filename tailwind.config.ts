@@ -9,7 +9,6 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-<<<<<<< HEAD
 		backgroundImage: {
 			companyDetailsBg: "url('/details-bg.svg')",
 		},
@@ -18,13 +17,6 @@ const config: Config = {
 			dms_sans: ["var(--font-dms_sans)", "sans-serif"],
 			londrina: ["var(--font-londrina)", "cursive"],
 		},
-=======
-  		fontFamily: {
-  			sans: ["var(--font-inter)", "sans-serif"],
-  			dms_sans: ["var(--font-dms_sans)", "sans-serif"],
-  			londrina: ["var(--font-londrina)", "cursive"]
-  		},
->>>>>>> db0b2468e043cccc9d27a9dcdee4d5439e51614f
   		colors: {
   			brandGreen: '#228B22',
   			brandText: '#082608',
