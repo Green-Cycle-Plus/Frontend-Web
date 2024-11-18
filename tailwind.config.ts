@@ -9,11 +9,14 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-  		fontFamily: {
-  			sans: ["var(--font-inter)", "sans-serif"],
-  			dms_sans: ["var(--font-dms_sans)", "sans-serif"],
-  			londrina: ["var(--font-londrina)", "cursive"]
-  		},
+		backgroundImage: {
+			companyDetailsBg: "url('/details-bg.svg')",
+		},
+		fontFamily: {
+			sans: ["var(--font-inter)", "sans-serif"],
+			dms_sans: ["var(--font-dms_sans)", "sans-serif"],
+			londrina: ["var(--font-londrina)", "cursive"],
+		},
   		colors: {
   			brandGreen: '#228B22',
   			brandText: '#082608',
