@@ -1,4 +1,3 @@
-import React from 'react'
 import { BarChart, Trash2, Users, Wallet } from 'lucide-react'
 
 const sidebarItems = [
@@ -10,7 +9,10 @@ const sidebarItems = [
   { id: 'analytics', icon: BarChart, label: 'Analytics' },
 ]
 
-export function Sidebar({ activePage, setActivePage }: { activePage: string, setActivePage: (x: string) => void }) {
+export function Sidebar({ activePage, setActivePage }: {
+  activePage: string
+  setActivePage: (page: string) => void
+}) {
   return (
     <div className="w-64 bg-[#497E5D] text-white p-4">
       <div className="flex items-center gap-2 mb-8">
