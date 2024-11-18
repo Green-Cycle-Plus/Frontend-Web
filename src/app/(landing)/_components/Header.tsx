@@ -38,9 +38,9 @@ const Header = () => {
           </Link>
         </div>
 
-        <button className="hidden md:block bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
+        <Link href="/companyPage" className="hidden md:block bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
           Get started
-        </button>
+        </Link>
 
         {/* Mobile menu button */}
         <div className="md:hidden">
