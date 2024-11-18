@@ -1,10 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { Check, ChevronRight, HelpCircle, MapPin, Shield, Upload } from 'lucide-react'
+import { ChevronRight, HelpCircle, MapPin, Shield, Upload } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -81,6 +79,7 @@ export default function CompanyProfileWizard() {
     }
   })
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const onSubmit = async (data: any) => {
     setIsSubmitting(true)
     // Simulate API call
@@ -222,7 +221,7 @@ export default function CompanyProfileWizard() {
                               key={type.id}
                               control={form.control}
                               name="wasteTypes"
-                              render={({ field }) => {
+                              render={({  }) => {
                                 return (
                                   <FormItem
                                     key={type.id}
