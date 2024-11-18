@@ -15,7 +15,7 @@ export function Sidebar({ activePage, setActivePage }: any) {
     <div className="w-64 bg-[#497E5D] text-white p-4">
       <div className="flex items-center gap-2 mb-8">
         <Trash2 className="h-6 w-6" />
-        <span className="text-xl font-bold">GreenCyclePlus</span>
+        <span className="text-xl font-bold">GreenCycle+</span>
       </div>
       <nav>
         {sidebarItems.map((item) => (

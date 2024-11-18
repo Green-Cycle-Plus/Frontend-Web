@@ -20,7 +20,7 @@ const Header = () => {
           href="/"
           className="text-4xl font-semibold text-brandGreen font-londrina"
         >
-          Greencycle
+          Greencycle+
         </Link>
 
         <div className="hidden md:flex items-center space-x-8 font-dms_sans">
