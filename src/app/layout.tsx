@@ -1,7 +1,9 @@
-// LandingPageLayout.tsx
+// RootLayout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter , DM_Sans, Londrina_Solid} from "next/font/google";
+import { InitialStateProvider } from "@/config/initial-state-provider";
+import { headers } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"], variable:"--font-inter" });
 const dms_sans = DM_Sans({ subsets: ["latin"], variable:"--font-dms_sans" });
@@ -21,10 +23,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const cookies = await headers();
+  const cookie = cookies.get("cookie") ?? "";
   return (
     <html lang="en">
       <body className={`${inter.variable} ${dms_sans.variable} ${londrina.className}`}>
-        {children}
+        <InitialStateProvider cookie={cookie}>{children}</InitialStateProvider>
       </body>
     </html>
   );

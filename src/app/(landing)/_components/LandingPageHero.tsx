@@ -1,3 +1,4 @@
+import { GetStartedModal } from '@/components/modals/get-started-modal'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -23,9 +24,7 @@ const LandingPageHero = () => {
         </p>
 
         <div className="flex flex-wrap gap-4 mt-7">
-          <Link href="/companyPage" className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
-            Get started
-          </Link>
+          <GetStartedModal/>
           <button className="border border-[#228B22] text-[#228B22] p-[12.8px]  rounded-[24px] font-semibold text-base font-dms_sans hover:border-gray-300 transition-colors">
             Learn more
           </button>

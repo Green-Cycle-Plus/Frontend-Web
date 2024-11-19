@@ -24,9 +24,10 @@ const CompanyHero = () => {
                            </div>
 
                             <div className="flex flex-wrap gap-4 mt-7">
-                                <button className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
+                                {/* // we don't need this here for now */}
+                                {/* <button className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
                                     Get started
-                                </button>
+                                </button> */}
                                 <button className="border border-[#228B22] text-[#228B22] p-[12.8px]  rounded-[24px] font-semibold text-base font-dms_sans hover:border-gray-300 transition-colors">
                                     Learn more
                                 </button>
