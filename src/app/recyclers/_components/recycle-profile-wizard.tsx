@@ -34,6 +34,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useAccount } from 'wagmi'
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 
 const steps = [
   'Company Information',
@@ -57,12 +58,67 @@ const wasteTypes = [
   { id: 'e-waste', label: 'E-Waste' },
   { id: 'organic', label: 'Organic Waste' }
 ]
+const GOOGLE_MAPS_API_KEY = 'AIzaSyAbOAtuvK_j271mb8O2_FDdKYvRGhSPqJE'
+const mapContainerStyle = {
+  width: "100%",
+  height: "500px",
+};
+const defaultCenter = {
+  lat: 0,
+  lng: 0
+}
+
 
 export default function CompanyProfileWizard() {
+  const [showMap, setShowMap] = React.useState(false)
+  const [selectedLocation, setSelectedLocation] = React.useState<{ lat: number; lng: number } | null>(null)
+  const [center, setCenter] = React.useState(defaultCenter)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+
+
   const [step, setStep] = React.useState(0);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { isConnected } = useAccount();
+  
+  const handleMapClick = (event:any) => {
+    setSelectedLocation({
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng()
+    })
+  }
 
+  const handleLoadMap = () => {
+    setIsLoading(true)
+    setError(null)
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+          setCenter({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+          setShowMap(true)
+          setIsLoading(false)
+        },
+        (err) => {
+          console.error("Error getting location:", err)
+          setError("Unable to get your location. Using default map center.")
+          setShowMap(true)
+          setIsLoading(false)
+        }
+      )
+    } else {
+      setError("Geolocation is not supported by your browser. Using default map center.")
+      setShowMap(true)
+      setIsLoading(false)
+    }
+  }
   const form = useForm({
     defaultValues: {
       companyName: '',
@@ -203,13 +259,36 @@ export default function CompanyProfileWizard() {
                         <FormControl>
                           <div className="relative">
                             <Input placeholder="Enter location" {...field} />
-                            <MapPin className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                            <MapPin onClick={handleLoadMap} className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground cursor-pointer" />
                           </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                        {showMap && (
+        <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={center}
+            zoom={2}
+            onClick={handleMapClick}
+          >
+            {selectedLocation && (
+              <Marker position={selectedLocation} />
+            )}
+          </GoogleMap>
+        </LoadScript>
+      )}
+     {error && (
+        <p className="text-red-500">{error}</p>
+      )}
+      
+   {selectedLocation && (
+        <p className="text-lg">
+          Selected Location: Latitude {selectedLocation.lat.toFixed(6)}, Longitude {selectedLocation.lng.toFixed(6)}
+        </p>
+      )}
                 </div>
               )}
 

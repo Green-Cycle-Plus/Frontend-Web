@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 const CompanyCard = () => {
@@ -99,9 +100,9 @@ const CompanyCard = () => {
 
                                 </div>
                                 <div className='mt-5 flex justify-end'>
-                                    <button className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
+                                    <Link href={`/companyPage/${item.name}`} className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
                                         View
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
