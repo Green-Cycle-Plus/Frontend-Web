@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { ForwardRefExoticComponent, RefAttributes, useState } from 'react'
 import { StepSidebar } from './step-sidebar'
 import { CompanyInformation } from './steps/company-information'
 import { ServiceSetup } from './steps/service-setup'
 import { UploadDocuments } from './steps/upload-documents'
 import { ConfirmationApproval } from './steps/confirmation-approval'
+import { FileText, FolderUp, LucideProps, ShieldCheck, User } from 'lucide-react'
 
 export type StepStatus = 'completed' | 'current' | 'pending'
 
@@ -13,14 +14,15 @@ export interface Step {
   id: number
   title: string
   subtitle: string
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>
   status: StepStatus
 }
 
 const initialSteps: Step[] = [
-  { id: 1, title: 'Step 1', subtitle: 'Company Information', status: 'current' },
-  { id: 2, title: 'Step 2', subtitle: 'Service Setup', status: 'pending' },
-  { id: 3, title: 'Step 3', subtitle: 'Upload Documents', status: 'pending' },
-  { id: 4, title: 'Step 3', subtitle: 'Confirmation and Approval', status: 'pending' },
+  { id: 1, title: 'Step 1', subtitle: 'Company Information', icon: User, status: 'current' },
+  { id: 2, title: 'Step 2', subtitle: 'Service Setup', icon: FileText, status: 'pending' },
+  { id: 3, title: 'Step 3', subtitle: 'Upload Documents', icon: FolderUp, status: 'pending' },
+  { id: 4, title: 'Step 3', subtitle: 'Confirmation and Approval', icon: ShieldCheck, status: 'pending' },
 ]
 
 export function RecyclerOnboardingWizard() {

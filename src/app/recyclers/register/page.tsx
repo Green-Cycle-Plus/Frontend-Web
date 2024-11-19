@@ -5,9 +5,7 @@ import { RecyclerOnboardingWizard } from './_components/recycler-onboarding-wiza
 export default function RegsiterRecycler() {
   return (
     <div className=""> 
-
       <RecyclerOnboardingWizard />
-
       <span className="block my-8"></span>
       <Footer/>
     </div>

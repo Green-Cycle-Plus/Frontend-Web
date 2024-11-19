@@ -46,6 +46,9 @@ export function ConfirmationApproval({ onPrevious }: ConfirmationApprovalProps) 
           >
             Previous
           </Button>
+          <Button>
+            Submit
+          </Button>
         </div>
       </div>
     </div>
