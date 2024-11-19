@@ -33,6 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useAccount } from 'wagmi'
 
 const steps = [
   'Company Information',
@@ -58,8 +59,9 @@ const wasteTypes = [
 ]
 
 export default function CompanyProfileWizard() {
-  const [step, setStep] = React.useState(0)
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [step, setStep] = React.useState(0);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { isConnected } = useAccount();
 
   const form = useForm({
     defaultValues: {
@@ -91,7 +93,7 @@ export default function CompanyProfileWizard() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-6 font-mono">
+    <div className="mx-auto max-w-3xl p-6 font-mono relative overflow-hidden">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <div className="text-sm text-muted-foreground">Step {step + 1} of {steps.length}</div>
@@ -100,7 +102,12 @@ export default function CompanyProfileWizard() {
         <Progress value={((step + 1) / steps.length) * 100} className="h-2 bg-emerald-100" />
       </div>
 
-      <Card>
+      <Card className='relative overflow-hidden'>
+        {!isConnected && (
+          <div className='w-full h-full  absolute flex items-center justify-center backdrop-blur-sm z-10 p-4 mr-2 rounded-lg'>
+            <w3m-connect-button/>
+          </div>
+        )}
         <CardHeader>
           <CardTitle>{steps[step]}</CardTitle>
         </CardHeader>

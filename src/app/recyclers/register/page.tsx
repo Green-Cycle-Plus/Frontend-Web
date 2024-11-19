@@ -1,5 +1,5 @@
 import Header from '@/app/(landing)/_components/Header';
-import CompanyProfileWizard from '../_components/recycle_profile_wizard';
+import CompanyProfileWizard from '../_components/recycle-profile-wizard';
 import Footer from '@/app/(landing)/_components/footer';
 
 export default function RegsiterRecycler() {
