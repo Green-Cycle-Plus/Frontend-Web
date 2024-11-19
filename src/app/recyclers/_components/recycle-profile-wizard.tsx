@@ -1,531 +1,191 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import { ChevronRight, HelpCircle, MapPin, Shield, Upload } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { HelpCircle } from 'lucide-react'
+import Link from "next/link"
+import { useState } from "react"
+import { FormProvider, useForm } from "react-hook-form"
+import * as z from "zod"
+import { CompanyInformationStep } from "./CompanyInformationStep"
+import { ServiceSetupStep } from "./ServiceSetupStep"
+import { UploadDocumentStep } from "./UploadDocumentStep"
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { useAccount } from 'wagmi'
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
+const companyInfoSchema = z.object({
+  companyName: z.string().min(1, "Company name is required"),
+  registrationNumber: z.string().min(1, "Registration number is required"),
+  email: z.string().email("Invalid email address"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+  location: z.string().min(1, "Location is required"),
+})
 
-const steps = [
-  'Company Information',
-  'Recycling Capabilities',
-  'Documentation',
-  'Wallet Setup'
-]
+const serviceSetupSchema = z.object({
+  wasteType: z.string().min(1, "Please select a waste type"),
+  capacity: z.string().min(1, "Capacity is required"),
+  additionalServices: z.string().optional(),
+})
 
-const businessTypes = [
-  'Recycling Center',
-  'Waste Collection',
-  'Material Recovery',
-  'E-Waste Processing'
-]
+const fileSchema = z.custom<File>((file) => {
+  if (!(file instanceof File)) return false; 
+  const validTypes = ["image/png", "image/jpeg"]; 
+  const maxSizeInBytes = 5 * 1024 * 1024; // Max file size: 5MB
+  console.log(file)
+  return validTypes.includes(file.type) && file.size <= maxSizeInBytes;
+}, {
+  message: "File must be a valid image (PNG or JPEG) and not exceed 5MB",
+});
 
-const wasteTypes = [
-  { id: 'plastic', label: 'Plastic' },
-  { id: 'paper', label: 'Paper' },
-  { id: 'metal', label: 'Metal' },
-  { id: 'glass', label: 'Glass' },
-  { id: 'e-waste', label: 'E-Waste' },
-  { id: 'organic', label: 'Organic Waste' }
-]
-const GOOGLE_MAPS_API_KEY = 'AIzaSyAbOAtuvK_j271mb8O2_FDdKYvRGhSPqJE'
-const mapContainerStyle = {
-  width: "100%",
-  height: "500px",
-};
-const defaultCenter = {
-  lat: 0,
-  lng: 0
-}
+const uploadDocumentSchema = z.object({
+  logo: fileSchema,
+  documents: z.array(z.any()).min(1, "At least one document is required").max(5, "Maximum 5 documents allowed"),
+})
 
+const formSchema = companyInfoSchema.merge(serviceSetupSchema).merge(uploadDocumentSchema)
+const steps = ["Company Information", "Service Setup", "Upload Document", "Confirmation"]
 
 export default function CompanyProfileWizard() {
-  const [showMap, setShowMap] = React.useState(false)
-  const [selectedLocation, setSelectedLocation] = React.useState<{ lat: number; lng: number } | null>(null)
-  const [center, setCenter] = React.useState(defaultCenter)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-
-
-  const [step, setStep] = React.useState(0);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const { isConnected } = useAccount();
-  
-  const handleMapClick = (event:any) => {
-    setSelectedLocation({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng()
-    })
-  }
-
-  const handleLoadMap = () => {
-    setIsLoading(true)
-    setError(null)
-
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          })
-          setCenter({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          })
-          setShowMap(true)
-          setIsLoading(false)
-        },
-        (err) => {
-          console.error("Error getting location:", err)
-          setError("Unable to get your location. Using default map center.")
-          setShowMap(true)
-          setIsLoading(false)
-        }
-      )
-    } else {
-      setError("Geolocation is not supported by your browser. Using default map center.")
-      setShowMap(true)
-      setIsLoading(false)
-    }
-  }
-  const form = useForm({
-    defaultValues: {
-      companyName: '',
-      registrationNumber: '',
-      email: '',
-      phone: '',
-      businessType: '',
-      location: '',
-      wasteTypes: [],
-      equipment: '',
-      processingCapabilities: '',
-      serviceRadius: '',
-      documents: [],
-      walletType: 'single',
-      twoFactorEnabled: false
-    }
+  const [currentStep, setCurrentStep] = useState(0)
+  const methods = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+mode:"onChange"
   })
 
-  const onSubmit = async (data: unknown) => {
-    setIsSubmitting(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log(data)
-    setIsSubmitting(false)
-    if (step < steps.length - 1) {
-      setStep(step + 1)
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1)
+    } else {
+      console.log("Form submitted", data)
+      // Here you would typically send the data to your backend
+    }
+  }
+
+  const handleNextStep = async () => {
+    let isValid = false
+    switch (currentStep) {
+      case 0:
+        isValid = await methods.trigger(Object.keys(companyInfoSchema.shape) as any)
+        break
+      case 1:
+        isValid = await methods.trigger(Object.keys(serviceSetupSchema.shape) as any)
+        break
+      case 2:
+        isValid = await methods.trigger(Object.keys(uploadDocumentSchema.shape) as any)
+        break
+      default:
+        isValid = true
+    }
+
+    if (isValid) {
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1)
+      } else {
+        methods.handleSubmit(onSubmit)()
+      }
     }
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-6 font-mono relative overflow-hidden">
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-sm text-muted-foreground">Step {step + 1} of {steps.length}</div>
-          <div className="text-sm text-muted-foreground">{steps[step]}</div>
-        </div>
-        <Progress value={((step + 1) / steps.length) * 100} className="h-2 bg-emerald-100" />
-      </div>
-
-      <Card className='relative overflow-hidden'>
-        {!isConnected && (
-          <div className='w-full h-full  absolute flex items-center justify-center backdrop-blur-sm z-10 p-4 mr-2 rounded-lg'>
-            <w3m-connect-button/>
-          </div>
-        )}
-        <CardHeader>
-          <CardTitle>{steps[step]}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {step === 0 && (
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="companyName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Company Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter company name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="registrationNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Registration Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter registration number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="Enter email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input type="tel" placeholder="Enter phone number" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="businessType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Business Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select business type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {businessTypes.map((type) => (
-                              <SelectItem key={type} value={type.toLowerCase()}>
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Location</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input placeholder="Enter location" {...field} />
-                            <MapPin onClick={handleLoadMap} className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground cursor-pointer" />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                        {showMap && (
-        <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={center}
-            zoom={2}
-            onClick={handleMapClick}
-          >
-            {selectedLocation && (
-              <Marker position={selectedLocation} />
-            )}
-          </GoogleMap>
-        </LoadScript>
-      )}
-     {error && (
-        <p className="text-red-500">{error}</p>
-      )}
-      
-   {selectedLocation && (
-        <p className="text-lg">
-          Selected Location: Latitude {selectedLocation.lat.toFixed(6)}, Longitude {selectedLocation.lng.toFixed(6)}
-        </p>
-      )}
-                </div>
-              )}
-
-              {step === 1 && (
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="wasteTypes"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Waste Types Accepted</FormLabel>
-                        <div className="grid grid-cols-2 gap-4">
-                          {wasteTypes.map((type) => (
-                            <FormField
-                              key={type.id}
-                              control={form.control}
-                              name="wasteTypes"
-                              render={({  }) => {
-                                return (
-                                  <FormItem
-                                    key={type.id}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                  >
-                                    <FormControl>
-                                      {/* <Checkbox
-                                        checked={field.value?.includes(type.id))}
-                                        onCheckedChange={(checked: any) => {
-                                          return checked
-                                            ? field.onChange([...field.value, type.id])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                  (value: string) => value !== type.id
-                                                )
-                                              )
-                                        }}
-                                      /> */}
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      {type.label}
-                                    </FormLabel>
-                                  </FormItem>
-                                )
-                              }}
-                            />
-                          ))}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="equipment"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Equipment Inventory</FormLabel>
-                        <FormControl>
-                          <Input placeholder="List your specialized equipment" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="processingCapabilities"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Processing Capabilities</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Describe your processing capabilities" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="serviceRadius"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Service Radius (km)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Enter service radius" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
-
-              {step === 2 && (
-                <div className="space-y-4">
-                  <div className="border-2 border-dashed rounded-lg p-6 text-center">
-                    <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <div className="mt-4">
-                      <Button variant="outline">Upload Documents</Button>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Drag and drop your documents here or click to browse
-                    </p>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <Shield className="h-5 w-5 text-emerald-500" />
-                        <div>
-                          <p className="font-light">Business License</p>
-                          <p className="text-sm text-muted-foreground">PDF or image file</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Upload
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <Shield className="h-5 w-5 text-emerald-500" />
-                        <div>
-                          <p className="font-light">Environmental Certification</p>
-                          <p className="text-sm text-muted-foreground">PDF or image file</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Upload
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="walletType"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel>Wallet Type</FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="flex flex-col space-y-1"
-                          >
-                            <div className="flex items-center space-x-3 space-y-0">
-                              <RadioGroupItem value="single" id="single" />
-                              <Label htmlFor="single">Single Owner Wallet</Label>
-                            </div>
-                            <div className="flex items-center space-x-3 space-y-0">
-                              <RadioGroupItem value="multi" id="multi" />
-                              <Label htmlFor="multi">Multi-Signature Wallet</Label>
-                            </div>
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <Shield className="h-5 w-5 text-emerald-500" />
-                        <div>
-                          <p className="font-light">Security Key</p>
-                          <p className="text-sm text-muted-foreground">Set up your security key</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Configure
-                      </Button>
-                    </div>
-                    <FormField
-                      control={form.control}
-                      name="twoFactorEnabled"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-base">Two-factor Authentication</FormLabel>
-                            <FormDescription>
-                              Add an extra layer of security to your account
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <CardFooter className="flex justify-between px-0 pb-0">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setStep(Math.max(0, step - 1))}
-                  disabled={step === 0}
-                >
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <Card className="w-full max-w-2xl mx-auto font-dms_sans">
+          <CardContent className="p-6">
+            {currentStep === 0 && <CompanyInformationStep useForm={methods} />}
+            {currentStep === 1 && <ServiceSetupStep useForm={methods} />}
+            {currentStep === 2 && <UploadDocumentStep useForm={methods} />}
+            {currentStep === 3 && <ConfirmationStep  />}
+          </CardContent>
+          <CardFooter className="p-6 flex items-center justify-between">
+            <Link 
+              href="#" 
+              className="flex items-center text-sm text-muted-foreground hover:underline"
+            >
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Help center
+            </Link>
+            <div className="space-x-2">
+            {currentStep > 0 && (
+                <Button type="button" variant="outline" onClick={() => setCurrentStep(currentStep - 1)}>
                   Previous
                 </Button>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center gap-2">
-                        <Button type="submit" disabled={isSubmitting}>
-                          {isSubmitting ? (
-                            'Saving...'
-                          ) : step === steps.length - 1 ? (
-                            'Complete'
-                          ) : (
-                            <>
-                              Next
-                              <ChevronRight className="h-4 w-4" />
-                            </>
-                          )}
-                        </Button>
-                        <Button variant="outline" size="icon">
-                          <HelpCircle className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Need help? Click for more information</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </CardFooter>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+              )}
+            <Button type="button" onClick={handleNextStep} className="bg-black text-white hover:bg-black/90">
+                {currentStep === steps.length - 1 ? "Submit" : "Next"}
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
+      </form>
+    </FormProvider>
+  )
+}
+
+
+
+
+
+
+
+function ConfirmationStep() {
+  return (
+    <div className="space-y-6 text-center">
+      <h2 className="text-xl font-semibold text-[#4CAF50]">Confirmation and Approval</h2>
+      <svg
+        viewBox="0 0 200 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-48 h-32 mx-auto"
+      >
+        <path
+          d="M20 60L80 90L180 30"
+          stroke="#4CAF50"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M40 30h120v60H40z"
+          fill="#4CAF50"
+          fillOpacity="0.2"
+        />
+        <path
+          d="M40 30l60 30 60-30"
+          stroke="#4CAF50"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M160 90l-60-30-60 30"
+          stroke="#4CAF50"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <line
+          x1="10"
+          y1="100"
+          x2="30"
+          y2="100"
+          stroke="#4CAF50"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <line
+          x1="15"
+          y1="110"
+          x2="25"
+          y2="110"
+          stroke="#4CAF50"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </svg>
+      <div className="space-y-1">
+        <h3 className="text-lg font-medium">
+          Your account has been submitted for approval.
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Approval takes up to 24 hours.
+        </p>
+      </div>
     </div>
   )
 }
