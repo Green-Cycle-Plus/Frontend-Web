@@ -17,7 +17,7 @@ createWeb3Modal({
   enableOnramp: true,
   themeMode: "dark",
   themeVariables: {
-    "--w3m-accent": "#22c55e",
+    "--w3m-accent": "#228B22",
     // "--w3m-border-radius-master": "20px",
   },
 });
