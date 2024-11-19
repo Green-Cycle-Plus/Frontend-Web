@@ -10,6 +10,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-   <div className="font-mono">{children}</div>
+   <div className="">{children}</div>
   );
 }
