@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import React from "react";
 import {
@@ -7,13 +9,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { GetStartedModal } from "@/components/modals/get-started-modal";
+import { useAccount } from "wagmi";
+import { Button } from "@/components/ui/button";
 const navigationItems = [
   { name: "Home", href: "/" },
-  { name: "Register as a recycling company", href: "/recyclers/register" },
+  { name: "Register as a recycler", href: "/recyclers/register" },
   { name: "Contact us", href: "/contact" },
   { name: "Blog", href: "/blog" },
 ];
 const Header = () => {
+  const { isConnected } = useAccount();
   return (
     <nav className="w-full px-5 md:px-10 lg:px-[100px] py-6">
       <div className="flex items-center justify-between">
@@ -29,7 +35,7 @@ const Header = () => {
             Home
           </Link>
           <Link href="/recyclers/register" className="text-[#797979] hover:text-gray-900">
-            Register as a recycling company
+            Register as a Recycler
           </Link>
           <Link href="/contact" className="text-[#797979] hover:text-gray-900">
             Contact us
@@ -39,9 +45,7 @@ const Header = () => {
           </Link>
         </div>
 
-        <Link href="/companyPage" className="hidden md:block bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
-          Get started
-        </Link>
+        {isConnected ? <Button className="bg-[#228B22] text-white px-0 py-5 rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors"><w3m-account-button balance="hide"/> </Button>: <GetStartedModal/>}
 
         {/* Mobile menu button */}
         <div className="md:hidden">
