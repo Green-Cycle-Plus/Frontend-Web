@@ -22,18 +22,18 @@ export const requests: Request[] = [
 		status: "Pending",
 	},
 	{
-		id: "01",
-		type: "plastics",
-		quantity: 120,
-		location: "Wuse, Abuja",
-		status: "Pending",
+		id: "02",
+		type: "glass",
+		quantity: 400,
+		location: "Jabi, Abuja",
+		status: "Accepted",
 	},
 	{
-		id: "01",
-		type: "plastics",
-		quantity: 120,
-		location: "Wuse, Abuja",
-		status: "Pending",
+		id: "03",
+		type: "Paper",
+		quantity: 50,
+		location: "Lugbe, Abuja",
+		status: "Rejected",
 	},
 ];
 
@@ -60,26 +60,11 @@ export const columns: ColumnDef<Request>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className="text-sm">
-					{row.original.status === "Pending" && (
-						<div className="flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-full px-3 py-1 w-max">
-							{/* <span className="w-2 h-2 bg-yellow-600 rounded-full mr-2"></span> */}
-							Pending
-						</div>
-					)}
+					{row.original.status === "Pending" && <div className="flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-full px-3 py-1 w-max">Pending</div>}
 
-					{row.original.status === "Accepted" && (
-						<div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">
-							{/* <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span> */}
-							Verified
-						</div>
-					)}
+					{row.original.status === "Accepted" && <div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">Accepted</div>}
 
-					{row.original.status === "Rejected" && (
-						<div className="flex items-center justify-center bg-red-100 text-red-600 rounded-full px-3 py-1 w-max">
-							{/* <span className="w-2 h-2 bg-red-600 rounded-full mr-2"></span> */}
-							Failed
-						</div>
-					)}
+					{row.original.status === "Rejected" && <div className="flex items-center justify-center bg-red-100 text-red-600 rounded-full px-3 py-1 w-max">Rejected</div>}
 				</div>
 			);
 		},
