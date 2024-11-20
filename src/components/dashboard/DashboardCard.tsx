@@ -1,15 +1,15 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
 import { ArrowUp } from "lucide-react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DashboardCard = ({ description, image, title, percent }: any) => {
 	return (
 		<Card>
 			<CardHeader className="flex-row w-full justify-between">
 				<CardDescription className="text-xl">{description} </CardDescription>
-
 				<Image
 					src={image}
 					alt="overview"

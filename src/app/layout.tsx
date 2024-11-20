@@ -1,17 +1,21 @@
 // RootLayout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, DM_Sans, Londrina_Solid } from "next/font/google";
+import { 
+	Inter, 
+	DM_Sans, 
+	// Londrina_Solid 
+} from "next/font/google";
 import { InitialStateProvider } from "@/config/initial-state-provider";
 import { headers } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const dms_sans = DM_Sans({ subsets: ["latin"], variable: "--font-dms_sans" });
-const londrina = Londrina_Solid({
-	variable: "--font-londrina",
-	weight: "400",
-	subsets: ["latin"],
-});
+// const londrina = Londrina_Solid({
+// 	variable: "--font-londrina",
+// 	weight: "400",
+// 	subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
 	title: "Green Cycle Plus",
