@@ -40,7 +40,7 @@ export function GetStartedModal({ label } : { label?: string }) {
                     className="w-full bg-[#228B22] text-white font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors"
                     onClick={() => {
                         setOpen(false);
-                        router.push('/companyPage');
+                        router.push('/companies');
                         // Add navigation logic here
                         console.log("Navigating to app...")
                     }}
