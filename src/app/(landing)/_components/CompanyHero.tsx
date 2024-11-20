@@ -1,10 +1,42 @@
+'use client'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CategoryCard from './CategoryCard'
 import CompanyCard from './CompanyCard'
+import axios from 'axios'
 
 const CompanyHero = () => {
+    const [companies, setCompanies] = useState<Company[]>([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
+// useEffect(() => {
+//     const fetchCompanies = async () => {
+//       try {
+//         const response = await axios.get("https://api-greencycle.onrender.com/api/company", {
+//           headers: {
+//             // Authorization: "Bearer YOUR_API_TOKEN", // Replace with your token
+//             // "Content-Type": "application/json",
+//             "x-api-key": "c144fca11d1c9453d319eb71a823fca1a6facffa9b534cd6b825c36e57346c40", // Example header, optional
+//           },
+//         });
+//         console.log("response", response.data?.data);
+//         setCompanies(response.data?.data || []);
+//       } catch (error) {
+//         console.error("Error fetching companies:", error);
+//         setError("Failed to load companies. Please try again later.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchCompanies();
+//   }, []);
+
+
+
+
     return (
         <>       
          <div>
@@ -43,7 +75,9 @@ const CompanyHero = () => {
                 <h1 className='text-4xl font-bold'>Find by category</h1>
             </div>
         </div>
-        <CategoryCard />
+        {loading&&( <p className="p-10 text-gray-600">Loading...</p>)}
+        {error&&(<p className="p-10 text-red-600">{error}</p>)}
+        {(!loading && !error) && (<CategoryCard companies={companies}/>)}
         <div className='ml-5 mt-10'>
             <h1 className='text-2xl font-bold ml-10'>Recommended Companies</h1>
         </div>

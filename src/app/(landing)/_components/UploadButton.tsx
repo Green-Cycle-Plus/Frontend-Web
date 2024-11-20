@@ -10,15 +10,16 @@ import {
   import UploadImage from '../_components/UploadImage'  
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { HelpCircle } from 'lucide-react'
 
 const UploadButton = () => {
   return (
     <div className='w-full'>
     <Dialog >
-  <DialogTrigger className='py-2 px-4 bg-[#228B22] text-white rounded-3xl'>Upload</DialogTrigger>
+  <DialogTrigger className='py-2 px-4 bg-[#228B22] text-white rounded-3xl flex justify-end'>Upload</DialogTrigger>
   <DialogContent className='w-full'>
     <DialogHeader>
-      <DialogTitle className='ml-5 text-sm'>Upload waste details</DialogTitle>
+      <DialogTitle className='ml-5 text-sm mt-2'>Upload waste details</DialogTitle>
       <DialogDescription>
         <div>
           <UploadImage />
@@ -43,9 +44,15 @@ const UploadButton = () => {
           <Input placeholder='(e.g., condition, special handling requirements)'/>
         </div>
         </div>
-        <div className='flex justify-end gap-5 mt-5 mx-5'>
+        <div className='flex justify-between gap-5 mt-5 mx-5'>
+        <button className="flex items-center text-sm text-gray-500 hover:text-gray-700">
+          <HelpCircle className="mr-2 h-4 w-4" />
+          Help center
+        </button>
+        <div className='space-x-5'>
           <Button className='bg-white text-black'>Cancel</Button>
           <Button className='bg-[#228B22] text-white'>Upload</Button>
+          </div>
         </div>
       </DialogDescription>
     </DialogHeader>
