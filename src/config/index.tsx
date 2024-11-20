@@ -4,7 +4,7 @@ import {
   // mainnet,
   // arbitrum,
   // optimism,
-  sepolia,
+  liskSepolia,
   // base,
   // lisk,
   // baseSepolia,
@@ -17,8 +17,8 @@ export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 if (!projectId) throw new Error("Project ID is not defined");
 
 const metadata = {
-  name: "AppKit Starter",
-  description: "AppKit Starter",
+  name: "GreenCyclePlus",
+  description: "Turn your waste into wealth and make the environment and the world a better place for us all to live in recycling one waste at a time",
   url: "",
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
@@ -28,7 +28,7 @@ const chains = [
   // mainnet,
   // arbitrum,
   // optimism,
-  sepolia,
+  liskSepolia,
   // base,
   // lisk,
   // baseSepolia,

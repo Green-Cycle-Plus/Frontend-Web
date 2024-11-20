@@ -1,6 +1,8 @@
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Dialog } from "@/components/ui/dialog"
 import Image from "next/image"
+import UploadButton from "./UploadButton"
 
 export default function WasteRequestCard({price, quantity, wasteType, wasteImg, location}:{
     price: number,
@@ -39,9 +41,11 @@ export default function WasteRequestCard({price, quantity, wasteType, wasteImg, 
       </CardContent>
       
       <CardFooter className="p-0 pt-4 flex items-center justify-end">
-        <Button className="w-[97px] h-9 p-3 rounded-[20px] bg-[#228B22] font-dms_sans font-semibold text-sm text-white">
+        {/* <Button className="w-[97px] h-9 p-3 rounded-[20px] bg-[#228B22] font-dms_sans font-semibold text-sm text-white">
           Upload
-        </Button>
+        </Button> */}
+        <Dialog/>
+        <UploadButton />
       </CardFooter>
     </Card>
   )

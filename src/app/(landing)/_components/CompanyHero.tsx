@@ -45,7 +45,7 @@ const CompanyHero = () => {
         </div>
         <CategoryCard />
         <div className='ml-5 mt-10'>
-            <h1 className='text-2xl font-bold'>Recommended Companies</h1>
+            <h1 className='text-2xl font-bold ml-10'>Recommended Companies</h1>
         </div>
         <CompanyCard/>
         </>

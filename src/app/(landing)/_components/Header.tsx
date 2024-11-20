@@ -9,7 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { GetStartedModal } from "@/components/modals/get-started-modal";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 const navigationItems = [
@@ -45,7 +44,7 @@ const Header = () => {
           </Link>
         </div>
 
-        {isConnected ? <Button className="bg-[#228B22] text-white px-0 py-5 rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors"><w3m-account-button balance="hide"/> </Button>: <GetStartedModal/>}
+        {isConnected ? <Button className="bg-[#228B22] text-white px-0 py-5 rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors"><w3m-account-button balance="hide"/> </Button>: <w3m-connect-button/>}
 
         {/* Mobile menu button */}
         <div className="md:hidden">

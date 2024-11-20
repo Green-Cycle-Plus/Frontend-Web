@@ -10,8 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
-import CompanyCard from "../_components/CompanyCard";
-import Footer from "../_components/footer";
+import CompanyCard from "../(landing)/_components/CompanyCard";
+import Footer from "../(landing)/_components/footer";
 
 const page = () => {
 	return (
