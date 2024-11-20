@@ -30,7 +30,7 @@ export function GetStartedModal({ label } : { label?: string }) {
         <DialogHeader>
           <DialogTitle>Get Started with GreenCycle+</DialogTitle>
           <DialogDescription>
-            Choose how you'd like to proceed with our recycling platform.
+            Choose how you&apos;d like to proceed with our recycling platform.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 items-center">

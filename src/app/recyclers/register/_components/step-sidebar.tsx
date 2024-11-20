@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check, FileText } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Step } from './recycler-onboarding-wizard';
 
@@ -9,6 +9,7 @@ interface StepSidebarProps {
 }
 
 export function StepSidebar({ steps, currentStepId }: StepSidebarProps) {
+  console.log(currentStepId);
   return (
     <div className="w-80  p-6 ">
       <div className="mb-8 font-londorina">
