@@ -9,24 +9,23 @@ export function UploadDocumentStep({useForm}:{useForm:  UseFormReturn<{
     location: string;
     wasteType: string;
     capacity: string;
-    documents: any[];
+    documents: File[];
     additionalServices?: string | undefined;
-    logo: File;
+    logo: FileList;
   }, any, undefined>}) {
   
     const { register, setValue, watch, formState: { errors } } = useForm;
     const logo = watch("logo")
 
-    const isEmptyLogo = logo?.name === undefined
+    const isEmptyLogo = logo?.length === 0
 
     const documents = watch("documents")
-
+    console.log({documents})
   
     const handleLogoDrop = (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault()
-      const file = e.dataTransfer.files[0]
-      console.log({file})
-      if (file && file.type.startsWith('image/')) {
+      const file = e.dataTransfer.files
+      if (file && file[0].type.startsWith('image/')) {
         setValue("logo", file)
       }
     }
@@ -52,7 +51,7 @@ export function UploadDocumentStep({useForm}:{useForm:  UseFormReturn<{
             >
               <input
                 type="file"
-                // accept="image/*"
+                accept="image/*"
                 className="sr-only"
                 id="logo-upload"
                 {...register("logo")}
@@ -61,9 +60,9 @@ export function UploadDocumentStep({useForm}:{useForm:  UseFormReturn<{
                 htmlFor="logo-upload"
                 className="absolute inset-0 flex items-center justify-center cursor-pointer"
               >
-                {!isEmptyLogo ? (
+                {logo&&!isEmptyLogo ? (
                   <Image
-                    src={URL.createObjectURL(logo)}
+                    src={URL.createObjectURL(logo[0])}
                     alt="Company logo preview"
                     fill
                     className="object-contain p-4"

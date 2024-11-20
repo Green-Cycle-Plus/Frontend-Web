@@ -13,7 +13,7 @@ export function ServiceSetupStep({useForm}:{useForm:  UseFormReturn<{
     capacity: string;
     documents: any[];
     additionalServices?: string | undefined;
-    logo: File;
+    logo: FileList;
   }, any, undefined>}) {
     const { register, setValue, formState: { errors } } = useForm;
   

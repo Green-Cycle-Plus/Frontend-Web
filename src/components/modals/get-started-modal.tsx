@@ -45,7 +45,7 @@ export function GetStartedModal({ label } : { label?: string }) {
                         console.log("Navigating to app...")
                     }}
                 >
-                    Go to App
+                    Continue as user
                 </Button> 
               ) : <w3m-connect-button/>
             }
