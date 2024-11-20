@@ -7,7 +7,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 	error?: boolean;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, leftIcon, rightIcon, error, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, leftIcon, rightIcon, ...props }, ref) => {
 	return (
 		<div className={cn(`relative w-full`)}>
 			{!!leftIcon && <div className="absolute left-3 top-[50%] -translate-y-[50%]">{leftIcon}</div>}

@@ -9,7 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { GetStartedModal } from "@/components/modals/get-started-modal";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 const navigationItems = [

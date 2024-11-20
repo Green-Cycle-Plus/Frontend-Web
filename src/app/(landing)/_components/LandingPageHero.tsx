@@ -1,6 +1,5 @@
 import { GetStartedModal } from '@/components/modals/get-started-modal'
 import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
 
 const LandingPageHero = () => {
