@@ -3,17 +3,10 @@
 import { Button } from "../ui/button";
 
 import Image from "next/image";
-// import { usePathname } from "next/navigation";
-// // import { ConnectButton } from "@rainbow-me/rainbowkit";
-// import { Button } from "../ui/button";
-// import { Menu } from "lucide-react";
-// import { useState } from "react";
-// import MobileSideBar from "./mobileSideBar";
-// import Link from "next/link";
+import { useAccount } from "wagmi";
 
 function Nav() {
-	// const pathname = usePathname();
-	// const [isOpen, setIsOpen] = useState(false);
+	const { isConnected } = useAccount();
 
 	return (
 		<>
@@ -37,7 +30,14 @@ function Nav() {
 						<p className="text-sm">Admin</p>
 					</div>
 				</div>
-				<Button className="rounded-full bg-[#228B22] text-white">0xl4.....4DLq</Button>
+				{/* <Button className="rounded-full bg-[#228B22] text-white">0xl4.....4DLq</Button> */}
+				{isConnected ? (
+					<Button className="bg-[#228B22] text-white px-0 py-5 rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors">
+						<w3m-account-button balance="hide" />{" "}
+					</Button>
+				) : (
+					<w3m-connect-button />
+				)}
 				{/* <div className="relative h-12 w-[150px] md:w-[197px] lg:hidden">
 					<Image
 						src={"/images/logo.svg"}
