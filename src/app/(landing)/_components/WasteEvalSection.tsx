@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const WasteEvalSection = () => {
 	return (
-		<div className="relative ">
+		<div className="relative font-dms_sans">
 			<section
 				className="pb-[160px] px-5 lg:px-[100px]"
 				style={{

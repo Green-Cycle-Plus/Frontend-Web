@@ -87,6 +87,7 @@
 
 import axios from 'axios';
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 type Company = {
@@ -95,6 +96,8 @@ type Company = {
   companyName: string;
   offers: string;
   physicalAddress: string;
+  companyId: number;
+
 };
 
 const CompanyCard = () => {
@@ -155,9 +158,9 @@ const CompanyCard = () => {
                 <h1 className="bg-gray-100 p-2 rounded-2xl text-gray-600 text-sm">Paper</h1>
               </div>
               <div className="mt-5 flex justify-end">
-                <button className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
+                <Link href={`/companies${item.companyId}`} className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
                   View
-                </button>
+                </Link>
               </div>
             </div>
           </div>

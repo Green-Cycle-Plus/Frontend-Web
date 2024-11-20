@@ -6,7 +6,7 @@ import { IoMdCheckmarkCircle } from "react-icons/io";
 
 const HowItWorks = () => {
   return (
-    <>    <section className="mb-[100px] mt-[150px]">
+    <>    <section className="mb-[100px] mt-[150px] font-dms_sans">
       <h1 className='text-[#082608] flex justify-center text-4xl mt-10 font-bold'>How Greencycle works</h1>
       <div className='' style={{
         backgroundImage: "url(/back.svg)",

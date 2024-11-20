@@ -12,7 +12,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen max-w-[1440px] mx-auto bg-[#F8FFF8]">
+    <div className="min-h-screen w-full mx-auto bg-[#F8FFF8]">
       <Header/>
       {children}
    </div>
