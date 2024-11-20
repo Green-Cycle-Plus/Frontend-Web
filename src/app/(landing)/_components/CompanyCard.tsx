@@ -5,6 +5,7 @@ import React from 'react'
 const CompanyCard = () => {
     const companyCard = [
         {
+            slug: 'company-1',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -13,6 +14,15 @@ const CompanyCard = () => {
 
         },
         {
+            slug: 'company-2',
+            logo: "/logo.svg",
+            rate: "/rate.svg",
+            name: "Solscan",
+            offers: "2",
+            location: "Abuja",
+        },
+        {
+            slug: 'company-3',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -21,6 +31,7 @@ const CompanyCard = () => {
 
         },
         {
+            slug: 'company-4',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -29,6 +40,7 @@ const CompanyCard = () => {
 
         },
         {
+            slug: 'company-5',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -37,6 +49,7 @@ const CompanyCard = () => {
 
         },
         {
+            slug: 'company-6',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -45,6 +58,7 @@ const CompanyCard = () => {
 
         },
         {
+            slug: 'company-7',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -53,14 +67,7 @@ const CompanyCard = () => {
 
         },
         {
-            logo: "/logo.svg",
-            rate: "/rate.svg",
-            name: "Solscan",
-            offers: "2",
-            location: "Abuja",
-
-        },
-        {
+            slug: 'company-8',
             logo: "/logo.svg",
             rate: "/rate.svg",
             name: "Solscan",
@@ -100,14 +107,12 @@ const CompanyCard = () => {
 
                                 </div>
                                 <div className='mt-5 flex justify-end'>
-                                    <Link href={`/companies/${item.name}`} className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
+                                    <Link href={`/companies/${item.slug}`} className="bg-[#228B22] text-white p-[12.8px] rounded-[24px] font-semibold font-dms_sans hover:bg-green-700 transition-colors px-7 py-2 text-sm">
                                         View
                                     </Link>
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 ))
             }

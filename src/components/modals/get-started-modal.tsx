@@ -30,7 +30,7 @@ export function GetStartedModal({ label } : { label?: string }) {
         <DialogHeader>
           <DialogTitle>Get Started with GreenCycle+</DialogTitle>
           <DialogDescription>
-            Choose how you'd like to proceed with our recycling platform.
+            Choose how you&apos;d like to proceed with our recycling platform.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 items-center">
@@ -40,7 +40,7 @@ export function GetStartedModal({ label } : { label?: string }) {
                     className="w-full bg-[#228B22] text-white font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors"
                     onClick={() => {
                         setOpen(false);
-                        router.push('/companyPage');
+                        router.push('/companies');
                         // Add navigation logic here
                         console.log("Navigating to app...")
                     }}

@@ -80,7 +80,7 @@ setSelectedLocation: React.Dispatch<React.SetStateAction<{ lat: number; lng: num
       const address = await getAddressFromLatLng(selectedLocation.lat, selectedLocation.lng, );
 
 
-    useForm.setValue('location', address)??""}
+    useForm.setValue('location', address??"")}
     }
     const getAddressFromLatLng = async (lat: number, lng: number) => {
       const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`;
@@ -98,12 +98,18 @@ setSelectedLocation: React.Dispatch<React.SetStateAction<{ lat: number; lng: num
       <div className="space-y-6">
         <h2 className="text-xl font-semibold text-[#4CAF50] ">Company Information</h2>
         <div className="space-y-4">
+          {isLoading && (
+            <p>Loading map...</p>
+          )}
+          {error && (
+            <p className="text-red-500">{error}</p>
+          )}
         {showMap && (
         <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} >
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={center}
-            zoom={14}
+            zoom={16}
             onClick={handleMapClick}
           >
             {selectedLocation && (

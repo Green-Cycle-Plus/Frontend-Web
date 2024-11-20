@@ -195,7 +195,7 @@ export default function CompanyProfileWizard() {
         throw new Error(
           "Location not selected, please select a location using the map"
         );
-      // await createRecyclerOnchain(data, account.address);
+      await createRecyclerOnchain(data, account.address);
       const recyclerOnchain = await getRecycler(account.address);
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);

@@ -10,6 +10,7 @@ export default function RegsiterRecycler() {
       <span className="block my-8"></span>
       <Footer/>
     </div>
+
   );
    
 }
