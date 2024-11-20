@@ -24,6 +24,14 @@ const page = () => {
 		],
 	};
 
+	// const options = {
+	// 	plugins: {
+	// 		legend: {
+	// 			position: "bottom",
+	// 		},
+	// 	},
+	// };
+	
 	return (
 		<div className="p-5 px-10">
 			<div className="flex w-full justify-between">

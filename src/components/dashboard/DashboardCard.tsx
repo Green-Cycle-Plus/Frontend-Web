@@ -15,7 +15,6 @@ const DashboardCard = ({ description, image, title, percent }: DashboardCardProp
 		<Card>
 			<CardHeader className="flex-row w-full justify-between">
 				<CardDescription className="text-xl">{description} </CardDescription>
-
 				<Image
 					src={image}
 					alt="overview"
