@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { generateAbbreviation } from '@/lib/utils'
 
-export const collectors = [
+const collectors = [
     {
         id: 455,
         image: '',
@@ -34,7 +34,7 @@ export const collectors = [
     },
 ]
 
-export default function Collectors() {
+export default function CollectorsPage()  {
   return (
     <div className="px-8 bg-[#F5FFF9] min-h-screen">
     <div className='flex items-center justify-between mb-8'>

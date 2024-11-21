@@ -128,6 +128,7 @@ export default function CompanyProfileWizard() {
     );
   };
   const methods = useForm<z.infer<typeof formSchema>>({
+    // @ts-ignore
     resolver: zodResolver(formSchema),
     mode: "onChange",
   });
