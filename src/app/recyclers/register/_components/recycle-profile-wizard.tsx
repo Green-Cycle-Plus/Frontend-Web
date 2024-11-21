@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
 import { WAST_CONTRACT_ADDRESS } from "@/constants";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { readContract, writeContract } from "@wagmi/core";
@@ -14,6 +14,7 @@ import {
   FolderUp,
   HelpCircle,
   LucideProps,
+  Router,
   ShieldCheck,
   User,
 } from "lucide-react";
@@ -28,6 +29,8 @@ import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { ServiceSetupStep } from "./steps/ServiceSetupStep";
 import { UploadDocumentStep } from "./steps/UploadDocumentStep";
 import axios from "axios";
+import { WasteType } from "../page";
+import { useRouter } from "next/navigation";
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -81,6 +84,8 @@ const companyInfoSchema = z.object({
 
 const serviceSetupSchema = z.object({
   wasteType: z.string().min(1, "Please select a waste type"),
+  min_weight: z.string().min(1, "Min weight is required"),
+  amount: z.string().min(1, "Amount is required"),
   capacity: z.string().min(1, "Capacity is required"),
   additionalServices: z.string().optional(),
 });
@@ -101,17 +106,21 @@ const fileSchema = z.custom<FileList>(
 
 const uploadDocumentSchema = z.object({
   logo: fileSchema,
-  documents: z
-    .array(z.any())
-    .min(1, "At least one document is required")
-    .max(5, "Maximum 5 documents allowed"),
+  documents:z.custom<File[]>((file: FileList) => {
+      if (!file) return false;
+      const maxSizeInBytes = 5 * 1024 * 1024; // Max file size: 5MB
+      const isValidSize =
+       file.length > 0 && file[0].size <= maxSizeInBytes;
+      return isValidSize;
+    }, {
+      message: "Upload at least one document and document must not exceed 5MB",
+    })
 });
 
 const formSchema = companyInfoSchema
   .merge(serviceSetupSchema)
   .merge(uploadDocumentSchema);
-
-export default function CompanyProfileWizard() {
+export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType[]}) {
   const account = useAccount();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [currentStepId, setCurrentStepId] = useState(1);
@@ -119,6 +128,8 @@ export default function CompanyProfileWizard() {
     lat: number;
     lng: number;
   } | null>(null);
+  const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const updateStepStatus = (stepId: number, newStatus: StepStatus) => {
     setSteps((prevSteps) =>
@@ -219,6 +230,10 @@ export default function CompanyProfileWizard() {
         "licenseNumber": data.registrationNumber,
         "licenseDocument": documeUpload?.url,
         "companyLogo": logoUpload?.url,
+        "wasteTypeId": data.wasteType,
+        "min_weight": Number(data.min_weight),
+        "amount": Number(data.amount),
+        "description": data.additionalServices
       };
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/company/create`,
@@ -226,12 +241,12 @@ export default function CompanyProfileWizard() {
         {
           method: "POST",
           headers: {
-            "x-api-key":
-              "c144fca11d1c9453d319eb71a823fca1a6facffa9b534cd6b825c36e57346c40",
+            "x-api-key": process.env.NEXT_PUBLIC_BACKEND_API_KEY,
           },
         }
       );
       
+
      
       console.log("final response", response);
     } catch (error) {
@@ -244,13 +259,6 @@ export default function CompanyProfileWizard() {
     } finally {
       setLoading(false);
     }
-
-    // if (currentStep < steps.length - 1) {
-    //   setCurrentStep(currentStep + 1)
-    // } else {
-
-    // Here you would typically send the data to your backend
-    // }
   };
 
   const handleNextStep = async () => {
@@ -278,8 +286,17 @@ export default function CompanyProfileWizard() {
     if (isValid) {
       if (currentStepId < steps.length - 1) {
         goToNextStep();
-      } else {
+      } else if(currentStepId === steps.length - 1){
+         
         methods.handleSubmit(onSubmit)();
+     
+      }else{
+        toast({
+          title: "An error occured",
+          description: "Can't create recycler, please try again",
+          variant: "destructive",
+        });
+        // router.push("/dashboard");
       }
     }
   };
@@ -295,7 +312,7 @@ export default function CompanyProfileWizard() {
           />
         );
       case 2:
-        return <ServiceSetupStep useForm={methods} />;
+        return <ServiceSetupStep wasteTypes={wasteTypes} useForm={methods}  />;
       case 3:
         return <UploadDocumentStep useForm={methods} />;
       case 4:
@@ -321,7 +338,7 @@ export default function CompanyProfileWizard() {
                   Help center
                 </Link>
                 <div className="space-x-2">
-                  {currentStepId > 1 && (
+                  {(currentStepId > 1 && currentStepId < steps.length ) && (
                     <Button
                       type="button"
                       variant="outline"
@@ -334,13 +351,13 @@ export default function CompanyProfileWizard() {
                     type="button"
                     onClick={handleNextStep}
                     disabled={loading}
-                    className="bg-black text-white hover:bg-black/90"
+                    className="bg-black w-fit text-white hover:bg-black/90"
                   >
                     {loading
                       ? "Loading..."
-                      : currentStepId === steps.length - 1
+                      : currentStepId === steps.length -1
                       ? "Submit"
-                      : "Next"}
+                      : currentStepId === steps.length ? "Go to dashboard" : "Next"}
                   </Button>
                 </div>
               </CardFooter>
