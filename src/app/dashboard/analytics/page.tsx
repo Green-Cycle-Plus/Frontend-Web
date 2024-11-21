@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import DashboardCard from "@/components/dashboard/DashboardCard";
-import DataTableColumn from "@/components/dashboard/dataTable";
+// import DataTableColumn from "@/components/dashboard/dataTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EllipsisVertical } from "lucide-react";
 
