@@ -14,7 +14,6 @@ const CategoryCard = ({companies}:{
     <div className="w-full p-10 justify-center bg-[#E8F7E8] mx-auto grid grid-cols-1 gap-y-8 sm:gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8 mt-4 sm:mt-8 sm:px-8 pb-20">
       {companies.length > 0 ? (
         companies.map((item, index) => (
-          
             <div key={index} className="bg-white flex justify-center p-10 rounded-lg h-[275.34px]">
               <div>
                 <div className="bg-gradient-to-r from-[#DAFFDA] to-[#237823] px-10 py-2 h-[150px] rounded-lg w-[245.05px] flex items-center justify-center">

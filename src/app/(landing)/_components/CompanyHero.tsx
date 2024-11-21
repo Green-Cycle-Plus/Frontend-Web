@@ -11,32 +11,6 @@ const CompanyHero = () => {
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState<string | null>(null);
 
-// useEffect(() => {
-//     const fetchCompanies = async () => {
-//       try {
-//         const response = await axios.get("https://api-greencycle.onrender.com/api/company", {
-//           headers: {
-//             // Authorization: "Bearer YOUR_API_TOKEN", // Replace with your token
-//             // "Content-Type": "application/json",
-//             "x-api-key": "c144fca11d1c9453d319eb71a823fca1a6facffa9b534cd6b825c36e57346c40", // Example header, optional
-//           },
-//         });
-//         console.log("response", response.data?.data);
-//         setCompanies(response.data?.data || []);
-//       } catch (error) {
-//         console.error("Error fetching companies:", error);
-//         setError("Failed to load companies. Please try again later.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchCompanies();
-//   }, []);
-
-
-
-
     return (
         <>       
          <div>
@@ -51,8 +25,8 @@ const [error, setError] = useState<string | null>(null);
                             Start browsing to discover new companies                               
                             </h1>
                             <div className='relative w-full flex'>
-                           <Input  className='bg-white p-10' placeholder='Search for anything'  />
-                           <button className='absolute right-3 top-5 bg-[#228B22] text-white p-[12.8px] rounded-xl font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors'>Search</button>
+                           <Input  className='bg-white h-16' placeholder='Search for anything'  />
+                           <button className='absolute right-3 top-2 bg-[#228B22] px-7 py-3 text-white rounded-xl font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors'>Search</button>
                            </div>
 
                             <div className="flex flex-wrap gap-4 mt-7">
@@ -75,9 +49,7 @@ const [error, setError] = useState<string | null>(null);
                 <h1 className='text-4xl font-bold'>Find by category</h1>
             </div>
         </div>
-        {loading&&( <p className="p-10 text-gray-600">Loading...</p>)}
-        {error&&(<p className="p-10 text-red-600">{error}</p>)}
-        {(!loading && !error) && (<CategoryCard companies={companies}/>)}
+        <CategoryCard companies={companies}/>
         <div className='ml-5 mt-10'>
             <h1 className='text-2xl font-bold ml-10'>Recommended Companies</h1>
         </div>
