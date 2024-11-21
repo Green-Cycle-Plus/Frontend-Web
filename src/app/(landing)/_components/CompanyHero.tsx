@@ -1,10 +1,16 @@
+'use client'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CategoryCard from './CategoryCard'
 import CompanyCard from './CompanyCard'
+import axios from 'axios'
 
 const CompanyHero = () => {
+    const [companies, setCompanies] = useState<Company[]>([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
     return (
         <>       
          <div>
@@ -19,8 +25,8 @@ const CompanyHero = () => {
                             Start browsing to discover new companies                               
                             </h1>
                             <div className='relative w-full flex'>
-                           <Input  className='bg-white p-10' placeholder='Search for anything'  />
-                           <button className='absolute right-3 top-5 bg-[#228B22] text-white p-[12.8px] rounded-xl font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors'>Search</button>
+                           <Input  className='bg-white h-16' placeholder='Search for anything'  />
+                           <button className='absolute right-3 top-2 bg-[#228B22] px-7 py-3 text-white rounded-xl font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors'>Search</button>
                            </div>
 
                             <div className="flex flex-wrap gap-4 mt-7">
@@ -43,7 +49,7 @@ const CompanyHero = () => {
                 <h1 className='text-4xl font-bold'>Find by category</h1>
             </div>
         </div>
-        <CategoryCard />
+        <CategoryCard companies={companies}/>
         <div className='ml-5 mt-10'>
             <h1 className='text-2xl font-bold ml-10'>Recommended Companies</h1>
         </div>

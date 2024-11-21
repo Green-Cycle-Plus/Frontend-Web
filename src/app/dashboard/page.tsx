@@ -33,7 +33,7 @@ const page = () => {
 	// };
 	
 	return (
-		<div className="p-5 px-10">
+		<div className="pb-5 px-10">
 			<div className="flex w-full justify-between">
 				<h1 className="text-4xl text-[#285528]">Overview</h1>
 				<Image

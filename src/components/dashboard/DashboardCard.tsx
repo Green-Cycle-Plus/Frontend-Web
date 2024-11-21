@@ -13,7 +13,7 @@ interface DashboardCardProps {
 const DashboardCard = ({ description, image, title, percent }: DashboardCardProps) => {
 	return (
 		<Card>
-			<CardHeader className="flex-row w-full justify-between">
+			<CardHeader className="flex-row w-full justify-between mb-0">
 				<CardDescription className="text-xl">{description} </CardDescription>
 				<Image
 					src={image}
@@ -22,13 +22,13 @@ const DashboardCard = ({ description, image, title, percent }: DashboardCardProp
 					height={30}
 				/>
 			</CardHeader>
-			<CardContent>
-				<h3 className="text-3xl">{title}</h3>
+			<CardContent className="my-0">
+				<h3 className="text-4xl font-bold">{title}</h3>
 			</CardContent>
-			<CardFooter>
+			<CardFooter className="mt-0">
 				<p className="flex gap-x-2 items-center">
-					<span className="w-9 h-9 rounded-full bg-[#6ED196]/50 flex items-center justify-center">
-						<ArrowUp className="w-5 h-5 text-[#6ED196]" />
+					<span className="w-7 h-7 rounded-full bg-[#6ED196]/20 flex items-center justify-center">
+						<ArrowUp className="w-4 h-4 text-[#6ED196]" />
 					</span>
 					<span className="text-[#228B22]">+{percent}%</span> from last month
 				</p>

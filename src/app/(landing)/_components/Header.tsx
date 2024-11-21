@@ -11,12 +11,21 @@ import {
 } from "@/components/ui/sheet";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
+import { Londrina_Solid } from "next/font/google";
+
+const londrina = Londrina_Solid({
+	variable: "--font-londrina",
+	weight: "400",
+	subsets: ["latin"],
+});
+
 const navigationItems = [
   { name: "Home", href: "/" },
   { name: "Register as a recycler", href: "/recyclers/register" },
   { name: "Contact us", href: "/contact" },
   { name: "Blog", href: "/blog" },
 ];
+
 const Header = () => {
   const { isConnected } = useAccount();
   return (
@@ -24,7 +33,7 @@ const Header = () => {
       <div className="flex items-center justify-between">
         <Link
           href="/"
-          className="text-4xl font-semibold text-brandGreen font-londrina"
+          className={`text-4xl font-semibold text-brandGreen ${londrina.className}`}
         >
           Greencycle+
         </Link>
