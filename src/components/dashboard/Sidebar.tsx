@@ -36,7 +36,7 @@ const Sidebar = () => {
 			},
 			{
 				title: "Requests",
-				href: "/dashboard/verification-status",
+				href: "/dashboard/requests",
 				icon: "/trash.svg",
 			},
 			{
