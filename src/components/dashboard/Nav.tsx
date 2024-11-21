@@ -10,7 +10,7 @@ function Nav() {
 
 	return (
 		<>
-			<nav className=" h-[80px] lg:h-[40px] flex items-center justify-between lg:items-center lg:justify-end border-b border-[#D4D4D4] space-x-4 py-10 px-5 bg-white">
+			<nav className="h-[80px] lg:h-[40px] flex items-center justify-between lg:items-center lg:justify-end border-b border-[#D4D4D4] space-x-4 py-10 px-5 bg-white">
 				<Image
 					src={"/notifs.svg"}
 					alt="notification"
