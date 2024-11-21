@@ -1,11 +1,23 @@
 'use client'
 
 import * as React from 'react'
-import { BadgeCheck, Plus, Trash2, UserCheck } from 'lucide-react'
+import { BadgeCheck, Plus, Trash2, UserCheck, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { generateAbbreviation } from '@/lib/utils'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { useForm } from 'react-hook-form'
 
 const collectors = [
     {
@@ -35,12 +47,74 @@ const collectors = [
 ]
 
 export default function CollectorsPage()  {
+  const [isOpen, setIsOpen] = React.useState(false)
+  const { register, handleSubmit, formState: { errors }, reset } = useForm()
+
+  const onSubmit = (data: unknown) => {
+    console.log(data)
+    // Here you would typically send the data to your backend
+    setIsOpen(false)
+    reset()
+  }
+
   return (
     <div className="px-8 bg-[#F5FFF9] min-h-screen">
-    <div className='flex items-center justify-between mb-8'>
-      <h1 className="text-2xl font-bold text-[#228B22]">Collectors</h1>
-      <Button><Plus className='w-4 h-4 mr-0.5'/> Add Collector</Button>
-    </div>
+      <div className='flex items-center justify-between mb-8'>
+        <h1 className="text-2xl font-bold text-[#228B22]">Collectors</h1>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button><Plus className='w-4 h-4 mr-0.5'/> Add Collector</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New Collector</DialogTitle>
+              <DialogDescription>
+                Enter the details of the new collector here. Click save when you're done.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    className="col-span-3"
+                    {...register("name", { required: "Name is required" })}
+                  />
+                  {errors.name && <p className="text-red-500 text-sm col-start-2 col-span-3">{`${errors.name.message}`}</p>}
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="contact" className="text-right">
+                    Contact
+                  </Label>
+                  <Input
+                    id="contact"
+                    className="col-span-3"
+                    {...register("contact", { required: "Contact is required" })}
+                  />
+                  {errors.contact && <p className="text-red-500 text-sm col-start-2 col-span-3">{`${errors.contact.message}`}</p>}
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="address" className="text-right">
+                    Address
+                  </Label>
+                  <Textarea
+                    id="address"
+                    className="col-span-3"
+                    {...register("address", { required: "Address is required" })}
+                  />
+                  {errors.address && <p className="text-red-500 text-sm col-start-2 col-span-3">{`${errors.address.message}`}</p>}
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button type="submit">Save Collector</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
       <div className='flex items-center gap-10 flex-wrap'>
         {collectors.map(collector => (
             <Card className="max-w-md bg-white shadow-md md:min-w-[420px]" key={collector.id}>

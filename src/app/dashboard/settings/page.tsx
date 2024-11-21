@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
@@ -105,11 +104,6 @@ export default function SettingsPage() {
             </div>
           </div>
         </section>
-        <div className='w-full items-center justify-center'>
-          <Button variant="destructive" className="max-w-[400px] w-full bg-red-100 hover:bg-red-200 text-red-600">
-            Logout
-          </Button>
-        </div>
       </div>
     </div>
   )
