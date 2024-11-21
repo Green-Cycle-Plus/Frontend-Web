@@ -13,7 +13,7 @@ function Layout({
 				<Sidebar />
 			</div>
 			<div className="w-full h-full overflow-y-scroll ">
-				<div className=" mb-10 ">
+				<div className="mb-5">
 					<Nav />
 				</div>
 				<div className="children">{children}</div>
