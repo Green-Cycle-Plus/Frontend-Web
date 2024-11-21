@@ -31,7 +31,7 @@ const Sidebar = () => {
 			},
 			{
 				title: "Offers",
-				href: "/dashboard/data-management",
+				href: "/dashboard/offers",
 				icon: "/offers.svg",
 			},
 			{

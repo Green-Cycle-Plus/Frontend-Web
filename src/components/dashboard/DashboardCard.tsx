@@ -4,8 +4,13 @@ import Image from "next/image";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
 import { ArrowUp } from "lucide-react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DashboardCard = ({ description, image, title, percent }: any) => {
+interface DashboardCardProps {
+	description: string;
+	image: string;
+	title: string;
+	percent: string;
+}
+const DashboardCard = ({ description, image, title, percent }: DashboardCardProps) => {
 	return (
 		<Card>
 			<CardHeader className="flex-row w-full justify-between">
