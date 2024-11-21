@@ -60,12 +60,12 @@ const Sidebar = () => {
 
 	return (
 		<div>
-			<h1 className={`text-[#228B22] text-3xl font-bold text-center ${londrina.className}`}>GreenCycle</h1>
-			<div className="mt-5 space-y-2">
+			<h1 className={`mt-2 text-[#228B22] text-3xl font-bold text-center ${londrina.className}`}>GreenCycle</h1>
+			<div className="mt-8 space-y-2">
 				{routes.map(({ title, href, icon }) => (
 					<div
 						key={title}
-						className={`flex items-center gap-4 cursor-pointer hover:bg-primary10 text-border2 px-3 py-2 rounded-lg font-semibold ${pathname === href && "!text-white bg-[#497E5D]"}`}>
+						className={`flex items-center gap-4 cursor-pointer hover:bg-primary10 text-border2 px-5 py-5 rounded-lg font-semibold ${pathname === href && "!text-white bg-[#497E5D]"}`}>
 						<Image
 							src={icon}
 							alt="icon"
