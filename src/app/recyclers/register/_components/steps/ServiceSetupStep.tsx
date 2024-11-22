@@ -20,9 +20,10 @@ export function ServiceSetupStep({useForm}:{useForm:  UseFormReturn<{
   
     const wasteTypes = [
       "Organic Waste",
-      "Recyclable Materials",
+      "Glass Waste",
+      "Metal Waste",
+      "Plastic Waste",
       "Electronic Waste",
-      "Hazardous Waste",
       "Construction Debris",
     ]
   

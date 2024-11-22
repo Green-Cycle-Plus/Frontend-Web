@@ -4,8 +4,7 @@ import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
-import { toast } from "@/hooks/use-toast";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { readContract, writeContract } from "@wagmi/core";
@@ -28,6 +27,8 @@ import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { ServiceSetupStep } from "./steps/ServiceSetupStep";
 import { UploadDocumentStep } from "./steps/UploadDocumentStep";
 import axios from "axios";
+import { toast } from "sonner"
+
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -155,7 +156,7 @@ export default function CompanyProfileWizard() {
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createRecycler",
         args: [
           address as `0x${string}`,
@@ -167,6 +168,7 @@ export default function CompanyProfileWizard() {
       return result;
     } catch (error) {
       console.error("Error creating recycler onchain:", error);
+      toast("Failed to create recycler onchain");
       throw new Error("Failed to create recycler onchain");
     }
   };
@@ -175,13 +177,14 @@ export default function CompanyProfileWizard() {
     try {
       const result = await readContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "recyclers",
         args: [address as `0x${string}`],
       });
       return result;
     } catch (error) {
       console.error("Error getting recycler onchain:", error);
+      toast("Failed to get recycler onchain");
       throw new Error("Failed to get recycler onchain");
     }
   };
@@ -190,12 +193,16 @@ export default function CompanyProfileWizard() {
     setLoading(true);
     try {
       if (!account.address) {
+        toast.error("Wallet not connected");
         throw new Error("Wallet not connected");
       }
-      if (!selectedLocation)
+      if (!selectedLocation) {
+        toast.error("Location not selected, please select a location using the map");
         throw new Error(
           "Location not selected, please select a location using the map"
         );
+      }
+
       await createRecyclerOnchain(data, account.address);
       const recyclerOnchain = await getRecycler(account.address);
       const companyLogo = new FormData();
@@ -233,15 +240,11 @@ export default function CompanyProfileWizard() {
         }
       );
       
-     
+      toast.success("Recycler onboarding successful");
       console.log("final response", response);
     } catch (error) {
       console.error("An errror occured: ", error);
-      toast({
-        title: "An error occured",
-        description: "Can't create recycler, please try again",
-        variant: "destructive",
-      });
+      toast.error("Can't create recycler, please try again")
     } finally {
       setLoading(false);
     }
