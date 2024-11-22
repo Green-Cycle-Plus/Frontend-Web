@@ -29,7 +29,9 @@ export function CompanyInformationStep({useForm, selectedLocation, setSelectedLo
     location: string;
     wasteType: string;
     capacity: string;
-    documents: any[];
+    documents: File[];
+    amount:string,
+    min_weight: string;
     additionalServices?: string | undefined;
     logo: FileList;
   }, any, undefined>, 

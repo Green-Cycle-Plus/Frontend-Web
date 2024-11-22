@@ -73,39 +73,39 @@ export default function CollectorsPage()  {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
+              <div className="py-4 w-full space-y-2">
+                <div className="w-full items-center gap-4">
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
                   <Input
                     id="name"
-                    className="col-span-3"
+                    className="-3"
                     {...register("name", { required: "Name is required" })}
                   />
-                  {errors.name && <p className="text-red-500 text-sm col-start-2 col-span-3">{`${errors.name.message}`}</p>}
+                  {errors.name && <p className="text-red-500 text-sm ">{`${errors.name.message}`}</p>}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="w-full items-center gap-4">
                   <Label htmlFor="contact" className="text-right">
                     Contact
                   </Label>
                   <Input
                     id="contact"
-                    className="col-span-3"
+                    className=""
                     {...register("contact", { required: "Contact is required" })}
                   />
-                  {errors.contact && <p className="text-red-500 text-sm col-start-2 col-span-3">{`${errors.contact.message}`}</p>}
+                  {errors.contact && <p className="text-red-500 text-sm ">{`${errors.contact.message}`}</p>}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="w-full items-center gap-4">
                   <Label htmlFor="address" className="text-right">
                     Address
                   </Label>
                   <Textarea
                     id="address"
-                    className="col-span-3"
+                    className=""
                     {...register("address", { required: "Address is required" })}
                   />
-                  {errors.address && <p className="text-red-500 text-sm col-start-2 col-span-3">{`${errors.address.message}`}</p>}
+                  {errors.address && <p className="text-red-500 text-sm ">{`${errors.address.message}`}</p>}
                 </div>
               </div>
               <div className="flex justify-end">
