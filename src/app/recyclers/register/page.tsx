@@ -2,7 +2,6 @@ import Footer from '@/app/(landing)/_components/footer';
 import CompanyProfileWizard from './_components/recycle-profile-wizard';
 import Header from '@/app/(landing)/_components/Header';
 import axios from 'axios';
-import { headers } from 'next/headers';
 
 export interface WasteType {
   createdAt: string;
@@ -16,11 +15,9 @@ export default async function RegsiterRecycler() {
     `https://api-greencycle.onrender.com/api/waste-type`,
     {
     headers: {
-      "x-api-key": process.env.BACKEND_API_KEY,
-    }, 
-  },
-  
-    
+        "x-api-key": process.env.BACKEND_API_KEY,
+      }, 
+    },
   ) 
 const wasteTypes: WasteType[] = res.data?.data ?? [];
   return (
@@ -30,7 +27,5 @@ const wasteTypes: WasteType[] = res.data?.data ?? [];
       <span className="block my-8"></span>
       <Footer/>
     </div>
-
   );
-   
 }

@@ -4,12 +4,7 @@ import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
-<<<<<<< HEAD
-import { WASTE_CONTRACT_ADDRESS } from "@/constants";
-=======
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
->>>>>>> a62f7be0b4c1ea8fd52aab7f8cd2414e1eedb2cd
+import { WASTE_CONTRACT_ADDRESS } from "@/constants"
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { readContract, writeContract } from "@wagmi/core";
@@ -33,13 +28,10 @@ import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { ServiceSetupStep } from "./steps/ServiceSetupStep";
 import { UploadDocumentStep } from "./steps/UploadDocumentStep";
 import axios from "axios";
-<<<<<<< HEAD
 import { toast } from "sonner"
 
-=======
 import { WasteType } from "../page";
 import { useRouter } from "next/navigation";
->>>>>>> a62f7be0b4c1ea8fd52aab7f8cd2414e1eedb2cd
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -138,7 +130,6 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
     lng: number;
   } | null>(null);
   const router = useRouter();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const updateStepStatus = (stepId: number, newStatus: StepStatus) => {
     setSteps((prevSteps) =>
@@ -203,7 +194,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
       return result;
     } catch (error) {
       console.error("Error getting recycler onchain:", error);
-      toast("Failed to get recycler onchain");
+      toast.error("Failed to get recycler onchain");
       throw new Error("Failed to get recycler onchain");
     }
   };

@@ -20,16 +20,6 @@ export function ServiceSetupStep({useForm, wasteTypes}:{useForm:  UseFormReturn<
   }, any, undefined>, wasteTypes: WasteType[]}) {
     const { register, setValue, formState: { errors } } = useForm;
   
-    const wasteTypes = [
-      "Organic Waste",
-      "Glass Waste",
-      "Metal Waste",
-      "Plastic Waste",
-      "Electronic Waste",
-      "Construction Debris",
-    ]
-    console.log({wasteTypes})
-  
     return (
       <div className="space-y-6 font-dms_sans">
         <h2 className="text-xl font-semibold text-[#4CAF50]">Service Setup</h2>
