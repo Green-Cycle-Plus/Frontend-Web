@@ -9,6 +9,8 @@ export function UploadDocumentStep({useForm}:{useForm:  UseFormReturn<{
     location: string;
     wasteType: string;
     capacity: string;
+    amount:string,
+    min_weight: string;
     documents: File[];
     additionalServices?: string | undefined;
     logo: FileList;
@@ -32,7 +34,7 @@ export function UploadDocumentStep({useForm}:{useForm:  UseFormReturn<{
   
     const handleDocumentDrop = (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault()
-      const files = Array.from(e.dataTransfer.files)
+      const files = e.dataTransfer.files
       if (files.length + (documents?.length || 0) <= 5) {
         setValue("documents", [...(documents || []), ...files])
       }
@@ -85,7 +87,6 @@ export function UploadDocumentStep({useForm}:{useForm:  UseFormReturn<{
             >
               <input
                 type="file"
-                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                 className="sr-only"
                 id="document-upload"
                 multiple
