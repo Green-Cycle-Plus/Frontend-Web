@@ -292,12 +292,8 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
         methods.handleSubmit(onSubmit)();
      
       }else{
-        toast({
-          title: "An error occured",
-          description: "Can't create recycler, please try again",
-          variant: "destructive",
-        });
-        // router.push("/dashboard");
+      
+        router.push("/dashboard");
       }
     }
   };
