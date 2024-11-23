@@ -26,7 +26,7 @@ const UserSidebar = () => {
 		() => [
 			{
 				title: "Dashboard",
-				href: "/dashboard",
+				href: "/userDashboard",
 				icon: "/dashboard.svg",
 			},
 			{
