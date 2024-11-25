@@ -47,7 +47,7 @@ export default function WasteRequestCard({price, quantity, wasteType, wasteImg, 
           Upload
         </Button> */}
         <Dialog/>
-        <UploadButton offerId={offerId} recyclerId={recyclerId}/>
+        <UploadButton offerId={offerId} recyclerId={recyclerId} pricePerKg={price}/>
       </CardFooter>
     </Card>
   )

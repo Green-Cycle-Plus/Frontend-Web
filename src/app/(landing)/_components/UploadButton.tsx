@@ -10,7 +10,7 @@ import {
 import UploadImage from "../_components/UploadImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Loader } from "lucide-react";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { IoLocationOutline } from "react-icons/io5";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
@@ -38,9 +38,11 @@ const defaultCenter = {
 const UploadButton = ({
   offerId,
   recyclerId,
+  pricePerKg,
 }: {
   offerId: number;
   recyclerId: number;
+  pricePerKg: number;
 }) => {
   const [showMap, setShowMap] = useState(false);
   const [lAddress, setLAddress] = useState("");
@@ -117,7 +119,7 @@ const UploadButton = ({
 
     try {
       setSubmitting(true);
-      const price = 5;
+      const price = pricePerKg * weight;
       const makeRequestTxHash = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
         address: WASTE_CONTRACT_ADDRESS,
@@ -125,10 +127,10 @@ const UploadButton = ({
         args: [
           BigInt(recyclerId),
           BigInt(offerId),
-          BigInt(weight!),
+          BigInt(weight),
           BigInt(price),
-          selectedLocation!.lat,
-          selectedLocation!.lng,
+          selectedLocation.lat,
+          selectedLocation.lng,
         ],
       });
 
@@ -176,7 +178,11 @@ const UploadButton = ({
               <div className="grid grid-cols-2 gap-5 mx-5 gap-y-5">
                 <div>
                   <h1 className="text-black">Quantity in weight</h1>
-                  <Input type="number" value={weight} onChange={e => setWeight(parseInt(e.target.value))}/>
+                  <Input
+                    type="number"
+                    value={weight}
+                    onChange={(e) => setWeight(parseInt(e.target.value))}
+                  />
                   <h1 className="text-xs flex justify-end">
                     Suported format: kg
                   </h1>
@@ -226,8 +232,25 @@ const UploadButton = ({
                   Help center
                 </button>
                 <div className="space-x-5">
-                  <Button className="bg-white text-black" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                  <Button className="bg-[#228B22] text-white" onClick={handleSubmit}>Upload</Button>
+                  <Button
+                    className="bg-white text-black"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-[#228B22] text-white"
+                    onClick={handleSubmit}
+                  >
+                    {submitting ? (
+                      <span className="flex items-center">
+                        Making Request{" "}
+                        <Loader className="animate-spin w-3 h-3" />
+                      </span>
+                    ) : (
+                      "Make Request"
+                    )}
+                  </Button>
                 </div>
               </div>
             </DialogDescription>
