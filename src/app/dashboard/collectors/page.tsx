@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { config } from "@/config";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { useGetRecyclerCollectors } from "@/hooks/use-get-collectors";
 import { generateAbbreviation } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -87,7 +87,7 @@ export default function CollectorsPage() {
     }
   }, [account.address]);
   useWatchContractEvent({
-    address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+    address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
     abi: WASTE_CONTRACT_ABI,
     eventName: "collectorCreated",
     onLogs(logs) {
@@ -109,7 +109,7 @@ export default function CollectorsPage() {
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createCollector",
         args: [account.address as `0x${string}`, data.name, data.contact],
       });
@@ -121,8 +121,6 @@ export default function CollectorsPage() {
     }finally{
       setSubmitting(false);
     }
-
-
   };
 
   return (

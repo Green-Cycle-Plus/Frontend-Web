@@ -2,7 +2,6 @@ import Footer from '@/app/(landing)/_components/footer';
 import CompanyProfileWizard from './_components/recycle-profile-wizard';
 import Header from '@/app/(landing)/_components/Header';
 import axios from 'axios';
-import { headers } from 'next/headers';
 
 export interface WasteType {
   createdAt: string;

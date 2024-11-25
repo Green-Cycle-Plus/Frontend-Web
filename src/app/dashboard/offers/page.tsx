@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { config } from "@/config";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Image from "next/image";
@@ -118,7 +118,7 @@ const account   = useAccount()
   }, [account.address]);
 
   useWatchContractEvent({
-    address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+    address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
     abi: WASTE_CONTRACT_ABI,
     eventName: "OfferCreated",
     onLogs(logs) {
@@ -137,7 +137,7 @@ const account   = useAccount()
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createOffer",
         args: [data.waste_type, BigInt(data.price), BigInt(data.quantity)],
       });

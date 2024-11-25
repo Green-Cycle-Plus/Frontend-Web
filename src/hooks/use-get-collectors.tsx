@@ -1,8 +1,8 @@
-import { useCallback } from "react";
-import {  readContract } from "@wagmi/core";
-import { config } from "@/config";
 import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
+import { config } from "@/config";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
+import { readContract } from "@wagmi/core";
+import { useCallback } from "react";
 import { useAccount } from "wagmi";
 
 
@@ -14,7 +14,7 @@ export const useGetRecyclerCollectors = () => {
             if(!account?.address) throw new Error("Please connect Wallet")
           const result = await readContract(config, {
             abi: WASTE_CONTRACT_ABI,
-            address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+            address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
             functionName: "getRecyclerCollectors",
             args: [account.address],
           });
