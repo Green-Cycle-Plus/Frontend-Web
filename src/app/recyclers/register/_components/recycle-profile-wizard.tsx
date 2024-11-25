@@ -5,16 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
 import { WASTE_CONTRACT_ADDRESS } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import {
+  readContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import {
   FileText,
   FolderUp,
   HelpCircle,
   LucideProps,
-  Router,
+  // Router,
   ShieldCheck,
   User,
 } from "lucide-react";
@@ -31,6 +36,7 @@ import { UploadDocumentStep } from "./steps/UploadDocumentStep";
 import axios from "axios";
 import { WasteType } from "../page";
 import { useRouter } from "next/navigation";
+
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -67,7 +73,7 @@ const initialSteps: Step[] = [
   },
   {
     id: 4,
-    title: "Step 3",
+    title: "Step 4",
     subtitle: "Confirmation and Approval",
     icon: ShieldCheck,
     status: "pending",
@@ -135,7 +141,6 @@ export default function CompanyProfileWizard({
     lng: number;
   } | null>(null);
   const router = useRouter();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const updateStepStatus = (stepId: number, newStatus: StepStatus) => {
     setSteps((prevSteps) =>
@@ -183,14 +188,14 @@ export default function CompanyProfileWizard({
       });
       const transactionReceipt = await waitForTransactionReceipt(config, {
         hash: result,
-      })
-      if(transactionReceipt.status === "success"){
+      });
+      if (transactionReceipt.status === "success") {
+        toast.success("Recycler profile created successfully");
         return transactionReceipt.transactionHash;
       }
-
- 
     } catch (error) {
       console.error("Error creating recycler onchain:", error);
+      toast.error("Failed to create recycler onchain");
       throw new Error("Failed to create recycler onchain");
     }
   };
@@ -206,6 +211,7 @@ export default function CompanyProfileWizard({
       return result;
     } catch (error) {
       console.error("Error getting recycler onchain:", error);
+      toast.error("Failed to get recycler onchain");
       throw new Error("Failed to get recycler onchain");
     }
   };
@@ -214,15 +220,20 @@ export default function CompanyProfileWizard({
     setLoading(true);
     try {
       if (!account.address) {
+        toast.error("Wallet not connected");
         throw new Error("Wallet not connected");
       }
-      if (!selectedLocation)
+      if (!selectedLocation) {
+        toast.error(
+          "Location not selected, please select a location using the map"
+        );
         throw new Error(
           "Location not selected, please select a location using the map"
         );
+      }
       await createRecyclerOnchain(data, account.address);
       const recyclerOnchain = await getRecycler(account.address);
-      console.log({recyclerOnchain})
+      console.log({ recyclerOnchain });
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);
       companyLogo.append("upload_preset", "company_logos");
@@ -265,11 +276,7 @@ export default function CompanyProfileWizard({
       goToNextStep();
     } catch (error) {
       console.error("An errror occured: ", error);
-      toast({
-        title: "An error occured",
-        description: "Can't create recycler, please try again",
-        variant: "destructive",
-      });
+      toast.error("Can't create recycler, please try again");
     } finally {
       setLoading(false);
     }
