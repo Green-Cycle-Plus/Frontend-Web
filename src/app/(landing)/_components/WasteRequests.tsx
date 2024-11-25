@@ -5,7 +5,6 @@ import { WASTE_CONTRACT_ABI } from '@/abi/wasteContractAbi';
 import { WASTE_CONTRACT_ADDRESS } from '@/constants';
 import { config } from '@/config';
 import { readContract } from '@wagmi/core'
-import { run } from 'node:test';
 
 export type Offer = {
   offerId: number;
