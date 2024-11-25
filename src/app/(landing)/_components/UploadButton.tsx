@@ -18,7 +18,7 @@ import { config } from "@/config";
 import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { toast } from "sonner";
-import { parseEther } from "viem";
+import { parseUnits } from "viem";
 
 if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY) {
   throw new Error("GOOGLE_API_KEY is not defined");
@@ -130,8 +130,8 @@ const UploadButton = ({
           BigInt(offerId),
           BigInt(weight),
           BigInt(price),
-          Number(parseEther(`${selectedLocation.lat}`)),
-          Number(parseEther(`${selectedLocation.lng}`)),
+          Number(parseUnits(`${selectedLocation.lat}`, 7)),
+          Number(parseUnits(`${selectedLocation.lng}`, 7)),
         ],
       });
 
@@ -155,6 +155,7 @@ const UploadButton = ({
       }
     } catch (error) {
       setSubmitting(false);
+      console.log(`An unexpected error occured! ${error}`);
       return toast.error(`An unexpected error occured! ${error}`);
     } finally {
       setSubmitting(false);
@@ -244,6 +245,7 @@ const UploadButton = ({
                   <Button
                     className="bg-[#228B22] text-white"
                     onClick={handleSubmit}
+                    disabled={submitting}
                   >
                     {submitting ? (
                       <span className="flex items-center">
