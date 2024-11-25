@@ -3,4 +3,5 @@ interface Company {
     img: string;
     name: string;
     companyName: string;
+    companyId: string;
   }

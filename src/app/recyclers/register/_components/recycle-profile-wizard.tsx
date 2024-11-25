@@ -4,7 +4,7 @@ import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -106,21 +106,27 @@ const fileSchema = z.custom<FileList>(
 
 const uploadDocumentSchema = z.object({
   logo: fileSchema,
-  documents:z.custom<File[]>((file: FileList) => {
+  documents: z.custom<File[]>(
+    (file: FileList) => {
       if (!file) return false;
       const maxSizeInBytes = 5 * 1024 * 1024; // Max file size: 5MB
-      const isValidSize =
-       file.length > 0 && file[0].size <= maxSizeInBytes;
+      const isValidSize = file.length > 0 && file[0].size <= maxSizeInBytes;
       return isValidSize;
-    }, {
+    },
+    {
       message: "Upload at least one document and document must not exceed 5MB",
-    })
+    }
+  ),
 });
 
 const formSchema = companyInfoSchema
   .merge(serviceSetupSchema)
   .merge(uploadDocumentSchema);
-export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType[]}) {
+export default function CompanyProfileWizard({
+  wasteTypes,
+}: {
+  wasteTypes: WasteType[];
+}) {
   const account = useAccount();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [currentStepId, setCurrentStepId] = useState(1);
@@ -166,7 +172,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createRecycler",
         args: [
           address as `0x${string}`,
@@ -186,7 +192,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
     try {
       const result = await readContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "recyclers",
         args: [address as `0x${string}`],
       });
@@ -221,20 +227,20 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
       const documeUpload = await UploadDocumets({ formData: documents });
 
       const payload = {
-        "companyId": Number(recyclerOnchain[0].toString()),
-        "companyName": data.companyName,
-        "email": data.email,
-        "phoneNumber": data.phoneNumber,
-        "physicalAddress": data.location,
-        "lat": selectedLocation.lat,
-        "lon": selectedLocation.lng,
-        "licenseNumber": data.registrationNumber,
-        "licenseDocument": documeUpload?.url,
-        "companyLogo": logoUpload?.url,
-        "wasteTypeId": data.wasteType,
-        "min_weight": Number(data.min_weight),
-        "amount": Number(data.amount),
-        "description": data.additionalServices
+        companyId: Number(recyclerOnchain[0].toString()),
+        companyName: data.companyName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        physicalAddress: data.location,
+        lat: selectedLocation.lat,
+        lon: selectedLocation.lng,
+        licenseNumber: data.registrationNumber,
+        licenseDocument: documeUpload?.url,
+        companyLogo: logoUpload?.url,
+        wasteTypeId: data.wasteType,
+        min_weight: Number(data.min_weight),
+        amount: Number(data.amount),
+        description: data.additionalServices,
       };
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/company/create`,
@@ -246,9 +252,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
           },
         }
       );
-      
 
-     
       console.log("final response", response);
     } catch (error) {
       console.error("An errror occured: ", error);
@@ -287,12 +291,9 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
     if (isValid) {
       if (currentStepId < steps.length - 1) {
         goToNextStep();
-      } else if(currentStepId === steps.length - 1){
-         
+      } else if (currentStepId === steps.length - 1) {
         methods.handleSubmit(onSubmit)();
-     
-      }else{
-      
+      } else {
         router.push("/dashboard");
       }
     }
@@ -309,7 +310,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
           />
         );
       case 2:
-        return <ServiceSetupStep wasteTypes={wasteTypes} useForm={methods}  />;
+        return <ServiceSetupStep wasteTypes={wasteTypes} useForm={methods} />;
       case 3:
         return <UploadDocumentStep useForm={methods} />;
       case 4:
@@ -335,7 +336,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
                   Help center
                 </Link>
                 <div className="space-x-2">
-                  {(currentStepId > 1 && currentStepId < steps.length ) && (
+                  {currentStepId > 1 && currentStepId < steps.length && (
                     <Button
                       type="button"
                       variant="outline"
@@ -352,9 +353,11 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
                   >
                     {loading
                       ? "Loading..."
-                      : currentStepId === steps.length -1
+                      : currentStepId === steps.length - 1
                       ? "Submit"
-                      : currentStepId === steps.length ? "Go to dashboard" : "Next"}
+                      : currentStepId === steps.length
+                      ? "Go to dashboard"
+                      : "Next"}
                   </Button>
                 </div>
               </CardFooter>

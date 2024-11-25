@@ -1,7 +1,7 @@
 import React from 'react'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Step } from './recycler-onboarding-wizard';
+import { Step } from './recycle-profile-wizard'
 
 interface StepSidebarProps {
   steps: Step[]
