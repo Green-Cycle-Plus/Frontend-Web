@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter, DM_Sans } from "next/font/google";
 import { InitialStateProvider } from "@/config/initial-state-provider";
 import { headers } from "next/headers";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const dms_sans = DM_Sans({ subsets: ["latin"], variable: "--font-dms_sans" });
@@ -25,6 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 		<html lang="en">
 			<body className={`${inter.variable} ${dms_sans.className} `}>
 				<InitialStateProvider cookie={cookie}>{children}</InitialStateProvider>
+				<Toaster/>
 			</body>
 		</html>
 	);

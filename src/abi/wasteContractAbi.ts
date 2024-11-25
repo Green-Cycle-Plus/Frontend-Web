@@ -277,6 +277,12 @@ export const WASTE_CONTRACT_ABI = [
                 "type": "address"
             },
             {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "_recyclerId",
+                "type": "uint256"
+            },
+            {
                 "indexed": false,
                 "internalType": "string",
                 "name": "_location",
@@ -657,7 +663,28 @@ export const WASTE_CONTRACT_ABI = [
             }
         ],
         "name": "createRecycler",
-        "outputs": [],
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
     },
@@ -913,6 +940,87 @@ export const WASTE_CONTRACT_ABI = [
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "_recyclerId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getRecyclerRequests",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "userAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "recyclerAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "offerId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "weight",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "valuedAt",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amountPaid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isCompleted",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isAccepted",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "assignedCollector",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "escrowRequestID",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "enum WasteManagement.RequestStatus",
+                        "name": "status",
+                        "type": "uint8"
+                    }
+                ],
+                "internalType": "struct WasteManagement.WasteCollectionRequest[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "_userAddress",
                 "type": "address"
@@ -1104,6 +1212,85 @@ export const WASTE_CONTRACT_ABI = [
                 "internalType": "uint256",
                 "name": "minQuantity",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "recyclerRequests",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "userAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "recyclerAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "offerId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "weight",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "valuedAt",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountPaid",
+                "type": "uint256"
+            },
+            {
+                "internalType": "bool",
+                "name": "isCompleted",
+                "type": "bool"
+            },
+            {
+                "internalType": "bool",
+                "name": "isAccepted",
+                "type": "bool"
+            },
+            {
+                "internalType": "address",
+                "name": "assignedCollector",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "escrowRequestID",
+                "type": "uint256"
+            },
+            {
+                "internalType": "enum WasteManagement.RequestStatus",
+                "name": "status",
+                "type": "uint8"
             }
         ],
         "stateMutability": "view",
