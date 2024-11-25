@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
-import { BadgeCheck, Plus, Trash2, UserCheck, X } from "lucide-react";
+import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +9,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { generateAbbreviation } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -22,40 +20,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { useAccount } from "wagmi";
-import { WASTE_CONTRACT_ADDRESS } from "@/constants";
-import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { config } from "@/config";
-import { z } from "zod";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
+import { useGetRecyclerCollectors } from "@/hooks/use-get-collectors";
+import { generateAbbreviation } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { writeContract } from "@wagmi/core";
-const collectors = [
-  {
-    id: 455,
-    image: "",
-    name: "Bola Ahmed",
-    contact: "+234 813 334 5569",
-    totalWasteCollected: 5000,
-    completedCollections: 246,
-  },
-  {
-    id: 555,
-    image: "",
-    name: "Shola Dapo",
-    contact: "+234 913 554 5729",
-    totalWasteCollected: 3500,
-    completedCollections: 126,
-  },
-  {
-    id: 456,
-    image: "",
-    name: "Shawn Obi",
-    contact: "+233 805 742 2238",
-    totalWasteCollected: 2000,
-    completedCollections: 56,
-  },
-];
+import { BadgeCheck, Plus, Trash2, UserCheck } from "lucide-react";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { useAccount, useWatchContractEvent } from "wagmi";
+import { z } from "zod";
+
+interface ICollector {
+  id: bigint;
+  name: string;
+  contact: string;
+  numberOfWasteCollected?: bigint;
+  pricePerKg: bigint;
+  collectorAddress: string;
+  isAvailable: boolean;
+}
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -77,7 +62,10 @@ const formSchema = z.object({
 export default function CollectorsPage() {
   const [isOpen, setIsOpen] = React.useState(false);
   const account = useAccount();
+  const [submitting, setSubmitting] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const getRecyclerCollectors = useGetRecyclerCollectors();
+  const [collectors, setCollectors] = React.useState<ICollector[]>([]);
   const {
     register,
     handleSubmit,
@@ -87,8 +75,37 @@ export default function CollectorsPage() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  React.useEffect(() => {
     setLoading(true);
+    try {
+      getRecyclerCollectors().then((data) => {
+        console.log({data})
+       setCollectors(data as ICollector[])
+      });
+    } catch (error) {
+      console.error("An error occured while initializing", error);
+    }
+  }, [account.address]);
+  useWatchContractEvent({
+    address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+    abi: WASTE_CONTRACT_ABI,
+    eventName: "collectorCreated",
+    onLogs(logs) {
+      const newCollector: ICollector = {
+        id: logs[0].args.collectorId!,
+        name: logs[0].args._name!,
+        collectorAddress: logs[0].args._collectorAddress!,
+        contact: logs[0].args._contact!,
+        isAvailable:true,
+        numberOfWasteCollected:BigInt("0"),
+        pricePerKg:BigInt("0"),
+      };
+      setCollectors((prev) => [...prev, newCollector]);
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setSubmitting(true);
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
@@ -101,8 +118,8 @@ export default function CollectorsPage() {
       reset();
     } catch (error) {
       console.error("Error creating collector onchain:", error);
-    } finally {
-      setLoading(false);
+    }finally{
+      setSubmitting(false);
     }
   };
 
@@ -171,9 +188,9 @@ export default function CollectorsPage() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button disabled={loading} type="submit">
-                  {loading ? "Creating..." : "Create Collector"}
-                </Button>
+                <Button disabled={submitting} type="submit">{
+                  submitting ? "Creating..." : "Create Collector"
+                  }</Button>
               </div>
             </form>
           </DialogContent>
@@ -211,25 +228,25 @@ export default function CollectorsPage() {
                   </div>
                 </div>
                 <span className="ml-auto text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                  Available
+                  {collector.isAvailable ? "Available": "N/A"}
                 </span>
               </div>
             </CardHeader>
             <CardContent className="p-4 text-sm">
               <div className="flex items-center gap-2 text-sm text-gray-700">
                 <span className="">Contact:</span>
-                <span className="font-bold">+2348063562785</span>
+                <span className="font-bold">{collector.contact}</span>
               </div>
               <p className="mt-2 text-sm">
                 Total waste collected:{" "}
                 <span className="font-bold">
-                  {collector?.totalWasteCollected} kg
+                  {collector?.numberOfWasteCollected} kg
                 </span>
               </p>
               <p className="text-sm">
                 Completed collections:{" "}
                 <span className="font-bold">
-                  {collector?.completedCollections}
+                  {collector?.collectorAddress}
                 </span>
               </p>
             </CardContent>
