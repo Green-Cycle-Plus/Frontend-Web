@@ -39,11 +39,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     <main className="w-full py-5">
       <section className="bg-companyDetailsBg bg-contain w-full h-[285px] relative">
         <Image
-          width={0}
-          height={0}
+          width={200}
+          height={200}
           src={companyData?.company?.companyLogo || "/company-logo.svg"}
           alt="company-logo"
-          className="w-[166px] h-[166px] absolute left-[20px] lg:left-[120px] top-[161px]"
+          className="w-[166px] h-[166px] absolute left-[20px] lg:left-[120px] top-[161px] rounded-md"
         />
       </section>
       <section className="w-full px-5 md:px-10 lg:px-[120px] flex flex-col lg:flex-row items-start justify-between">
