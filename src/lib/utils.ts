@@ -18,3 +18,24 @@ export function generateAbbreviation(fullName: string): string {
   // Step 4: Return the abbreviation
   return abbreviation;
 }
+
+export function getWasteImageUrl(wasteType: string): string {
+  // Define a mapping of waste types to image URLs
+  const wasteImages: { [key: string]: string } = {
+      "plastic": "/plastic.svg",
+      "steel": "/steel.jpeg",
+      "metal": "/metal.svg",
+      "glass": "/glass.svg",
+      "tyres": "/tyres.jpeg",
+      // Add more specific waste types as needed
+  };
+
+  // Default image for general waste
+  const defaultImage = "/waste.jpg";
+
+  // Normalize the waste type to lowercase
+  const normalizedWasteType = wasteType.toLowerCase();
+
+  // Return the corresponding image URL or the default image if not found
+  return wasteImages[normalizedWasteType] || defaultImage;
+}
