@@ -86,10 +86,7 @@ const HowItWorks = () => {
               <p className='flex justify-center text-4xl mt-4 text-white'>sustainable future</p>
             </div>
             <div className='flex justify-center mt-5'>
-            <button className="border border-white text-white p-[12.8px]  rounded-[24px] font-semibold text-base font-dms_sans hover:border-gray-300 transition-colors">
-              Get Started
-            </button>
-          <GetStartedModal label="white"/>
+            <GetStartedModal label="white"/>
           </div>
 
           </div>
