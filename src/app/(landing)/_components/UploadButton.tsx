@@ -18,6 +18,7 @@ import { config } from "@/config";
 import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { toast } from "sonner";
+import { parseUnits } from "viem";
 
 if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY) {
   throw new Error("GOOGLE_API_KEY is not defined");
@@ -129,8 +130,8 @@ const UploadButton = ({
           BigInt(offerId),
           BigInt(weight),
           BigInt(price),
-          selectedLocation.lat,
-          selectedLocation.lng,
+          Number(parseUnits(`${selectedLocation.lat}`, 7)),
+          Number(parseUnits(`${selectedLocation.lng}`, 7)),
         ],
       });
 
@@ -154,6 +155,7 @@ const UploadButton = ({
       }
     } catch (error) {
       setSubmitting(false);
+      console.log(`An unexpected error occured! ${error}`);
       return toast.error(`An unexpected error occured! ${error}`);
     } finally {
       setSubmitting(false);
@@ -163,19 +165,19 @@ const UploadButton = ({
   return (
     <div className="w-full">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger className="py-2 px-4 bg-[#228B22] text-white rounded-3xl flex justify-end">
-          Waste Pickup Request
+        <DialogTrigger className="py-2 px-4 bg-[#228B22] text-white rounded-3xl flex justify-end text-sm">
+          Request pickup
         </DialogTrigger>
-        <DialogContent className="w-full">
+        <DialogContent className="w-full max-w-2xl max-h-[646px] overflow-y-scroll">
           <DialogHeader>
-            <DialogTitle className="ml-5 text-sm mt-2">
+            <DialogTitle className="text-lg">
               <h1>Upload Waste details</h1>
             </DialogTitle>
             <DialogDescription>
               <div>
                 <UploadImage />
               </div>
-              <div className="grid grid-cols-2 gap-5 mx-5 gap-y-5">
+              <div className="space-y-5">
                 <div>
                   <h1 className="text-black">Quantity in weight</h1>
                   <Input
@@ -189,16 +191,18 @@ const UploadButton = ({
                 </div>
                 <div>
                   <h1 className="text-black">Location</h1>
-                  <div className="flex items-center">
+                  <div>
                     <Input
                       placeholder="Add Pickup Location"
                       disabled
                       value={lAddress}
                       onChange={(e) => setLAddress(e.target.value)}
-                    />
-                    <IoLocationOutline
-                      onClick={handleLoadMap}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
+                      rightIcon={
+                        <IoLocationOutline
+                          onClick={handleLoadMap}
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
+                        />
+                      }
                     />
                   </div>
                 </div>
@@ -226,7 +230,7 @@ const UploadButton = ({
                   <Input placeholder="(e.g., condition, special handling requirements)" />
                 </div>
               </div>
-              <div className="flex justify-between gap-5 mt-5 mx-5">
+              <div className="flex justify-between gap-5 mt-5">
                 <button className="flex items-center text-sm text-gray-500 hover:text-gray-700">
                   <HelpCircle className="mr-2 h-4 w-4" />
                   Help center
@@ -241,6 +245,7 @@ const UploadButton = ({
                   <Button
                     className="bg-[#228B22] text-white"
                     onClick={handleSubmit}
+                    disabled={submitting}
                   >
                     {submitting ? (
                       <span className="flex items-center">

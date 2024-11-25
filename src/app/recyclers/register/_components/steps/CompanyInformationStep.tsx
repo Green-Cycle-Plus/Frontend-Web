@@ -120,20 +120,6 @@ export function CompanyInformationStep({
         Company Information
       </h2>
       <div className="space-y-4">
-        {isLoading && <p>Loading map...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        {showMap && (
-          <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={center}
-              zoom={16}
-              onClick={handleMapClick}
-            >
-              {selectedLocation && <Marker position={selectedLocation} />}
-            </GoogleMap>
-          </LoadScript>
-        )}
         <div className="space-y-2">
           <Label htmlFor="companyName" className="font-medium text-lg">
             Company Name
@@ -211,13 +197,30 @@ export function CompanyInformationStep({
             placeholder="Enter Location"
             className=""
             {...register("location", { required: "Location is required" })}
+            rightIcon={
+              <IoLocationOutline
+                onClick={handleLoadMap}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
+              />
+            }
           />
-          <IoLocationOutline
-            onClick={handleLoadMap}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
-          />
+
           {errors.location && (
             <p className="text-red-500">{errors.location.message}</p>
+          )}
+          {isLoading && <p>Loading map...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+          {showMap && (
+            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={center}
+                zoom={16}
+                onClick={handleMapClick}
+              >
+                {selectedLocation && <Marker position={selectedLocation} />}
+              </GoogleMap>
+            </LoadScript>
           )}
         </div>
       </div>

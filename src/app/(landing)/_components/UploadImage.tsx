@@ -63,7 +63,7 @@ const ImageUploader: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-[600px] mx-auto p-6">
+    <div className="w-full max-w-[600px] mx-auto py-6">
       <div
         className={`relative border-2 border-dashed rounded-lg p-8 text-center ${
           isDragging ? 'border-[#EBFFEB] bg-[#EBFFEB]' : 'border-[#228B22]'
