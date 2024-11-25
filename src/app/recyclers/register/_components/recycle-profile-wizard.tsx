@@ -8,7 +8,7 @@ import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { readContract, writeContract } from "@wagmi/core";
+import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import {
   FileText,
   FolderUp,
@@ -181,7 +181,14 @@ export default function CompanyProfileWizard({
           parseInt(selectedLocation!.lng.toString()),
         ],
       });
-      return result;
+      const transactionReceipt = await waitForTransactionReceipt(config, {
+        hash: result,
+      })
+      if(transactionReceipt.status === "success"){
+        return transactionReceipt.transactionHash;
+      }
+
+ 
     } catch (error) {
       console.error("Error creating recycler onchain:", error);
       throw new Error("Failed to create recycler onchain");
@@ -215,6 +222,7 @@ export default function CompanyProfileWizard({
         );
       await createRecyclerOnchain(data, account.address);
       const recyclerOnchain = await getRecycler(account.address);
+      console.log({recyclerOnchain})
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);
       companyLogo.append("upload_preset", "company_logos");
@@ -254,6 +262,7 @@ export default function CompanyProfileWizard({
       );
 
       console.log("final response", response);
+      goToNextStep();
     } catch (error) {
       console.error("An errror occured: ", error);
       toast({
