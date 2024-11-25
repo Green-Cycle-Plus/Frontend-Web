@@ -243,7 +243,7 @@ const UploadButton = ({
                     Cancel
                   </Button>
                   <Button
-                    className="bg-[#228B22] text-white"
+                    className="bg-[#228B22] hover:bg-[#228B22]/80 text-white"
                     onClick={handleSubmit}
                     disabled={submitting}
                   >
