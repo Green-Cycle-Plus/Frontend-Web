@@ -5,32 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
 import { WAST_CONTRACT_ADDRESS } from "@/constants";
+import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { useToast } from "@/hooks/use-toast";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import axios from "axios";
 import {
   FileText,
   FolderUp,
   HelpCircle,
   LucideProps,
-  Router,
   ShieldCheck,
-  User,
+  User
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ForwardRefExoticComponent, RefAttributes, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAccount } from "wagmi";
 import * as z from "zod";
+import { WasteType } from "../page";
 import { StepSidebar } from "./step-sidebar";
 import { CompanyInformationStep } from "./steps/CompanyInformationStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { ServiceSetupStep } from "./steps/ServiceSetupStep";
 import { UploadDocumentStep } from "./steps/UploadDocumentStep";
-import axios from "axios";
-import { WasteType } from "../page";
-import { useRouter } from "next/navigation";
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -122,6 +122,7 @@ const formSchema = companyInfoSchema
   .merge(uploadDocumentSchema);
 export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType[]}) {
   const account = useAccount();
+  const getRecycler = useReadRecyclers();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [currentStepId, setCurrentStepId] = useState(1);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -189,20 +190,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
     }
   };
 
-  const getRecycler = async (address: string) => {
-    try {
-      const result = await readContract(config, {
-        abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
-        functionName: "recyclers",
-        args: [address as `0x${string}`],
-      });
-      return result;
-    } catch (error) {
-      console.error("Error getting recycler onchain:", error);
-      throw new Error("Failed to get recycler onchain");
-    }
-  };
+
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -215,7 +203,7 @@ export default function CompanyProfileWizard({wasteTypes}:{wasteTypes: WasteType
           "Location not selected, please select a location using the map"
         );
       await createRecyclerOnchain(data, account.address);
-      const recyclerOnchain = await getRecycler(account.address);
+      const recyclerOnchain = await getRecycler();
       console.log({recyclerOnchain})
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);
