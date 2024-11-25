@@ -173,6 +173,31 @@ export const WASTE_CONTRACT_ABI = [
             {
                 "indexed": false,
                 "internalType": "address",
+                "name": "_user",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "int32",
+                "name": "_latitude",
+                "type": "int32"
+            },
+            {
+                "indexed": false,
+                "internalType": "int32",
+                "name": "_longitude",
+                "type": "int32"
+            }
+        ],
+        "name": "LocationSet",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
                 "name": "sender",
                 "type": "address"
             },
@@ -396,6 +421,37 @@ export const WASTE_CONTRACT_ABI = [
             }
         ],
         "name": "RequestCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "collectorId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_collectorAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "_name",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "_contact",
+                "type": "string"
+            }
+        ],
+        "name": "collectorCreated",
         "type": "event"
     },
     {
