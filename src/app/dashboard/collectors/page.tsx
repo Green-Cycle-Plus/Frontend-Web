@@ -24,12 +24,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { useAccount } from "wagmi";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { config } from "@/config";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {  writeContract } from "@wagmi/core";
+import { writeContract } from "@wagmi/core";
 const collectors = [
   {
     id: 455,
@@ -92,7 +92,7 @@ export default function CollectorsPage() {
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createCollector",
         args: [account.address as `0x${string}`, data.name, data.contact],
       });
@@ -101,11 +101,9 @@ export default function CollectorsPage() {
       reset();
     } catch (error) {
       console.error("Error creating collector onchain:", error);
-    }finally{
+    } finally {
       setLoading(false);
     }
-
-
   };
 
   return (
@@ -173,9 +171,9 @@ export default function CollectorsPage() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button disabled={loading} type="submit">{
-                  loading ? "Creating..." : "Create Collector"
-                  }</Button>
+                <Button disabled={loading} type="submit">
+                  {loading ? "Creating..." : "Create Collector"}
+                </Button>
               </div>
             </form>
           </DialogContent>

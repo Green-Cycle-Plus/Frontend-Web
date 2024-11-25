@@ -11,9 +11,13 @@ import UploadImage from "../_components/UploadImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { HelpCircle } from "lucide-react";
-
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { IoLocationOutline } from "react-icons/io5";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { config } from "@/config";
+import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
+import { toast } from "sonner";
 
 if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY) {
   throw new Error("GOOGLE_API_KEY is not defined");
@@ -40,6 +44,9 @@ const UploadButton = ({
 }) => {
   const [showMap, setShowMap] = useState(false);
   const [lAddress, setLAddress] = useState("");
+  const [weight, setWeight] = useState<number | undefined>();
+  const [submitting, setSubmitting] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
@@ -88,10 +95,7 @@ const UploadButton = ({
       lng,
     });
 
-    const address = await getAddressFromLatLng(
-      lat,
-      lng
-    );
+    const address = await getAddressFromLatLng(lat, lng);
     setLAddress(address);
   };
 
@@ -108,12 +112,55 @@ const UploadButton = ({
   };
 
   async function handleSubmit() {
-    
+    if (!weight || !selectedLocation || !offerId || !recyclerId)
+      return toast.error("Missing fields, please fill in all fields...");
+
+    try {
+      setSubmitting(true);
+      const price = 5;
+      const makeRequestTxHash = await writeContract(config, {
+        abi: WASTE_CONTRACT_ABI,
+        address: WASTE_CONTRACT_ADDRESS,
+        functionName: "makeRequest",
+        args: [
+          BigInt(recyclerId),
+          BigInt(offerId),
+          BigInt(weight!),
+          BigInt(price),
+          selectedLocation!.lat,
+          selectedLocation!.lng,
+        ],
+      });
+
+      const transactionReceipt = await waitForTransactionReceipt(config, {
+        hash: makeRequestTxHash,
+      });
+
+      if (transactionReceipt.status === "success") {
+        toast.success("Waste pickup request made succesfully");
+        setIsDialogOpen(false);
+        setSubmitting(false);
+        return;
+      } else if (transactionReceipt.status === "reverted") {
+        setSubmitting(false);
+        return toast.error(
+          "Waste pickup request was not completed successfully, transaction was reverted..."
+        );
+      } else {
+        setSubmitting(false);
+        return toast.error("An unexpected error occured!");
+      }
+    } catch (error) {
+      setSubmitting(false);
+      return toast.error(`An unexpected error occured! ${error}`);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
     <div className="w-full">
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger className="py-2 px-4 bg-[#228B22] text-white rounded-3xl flex justify-end">
           Waste Pickup Request
         </DialogTrigger>
@@ -128,8 +175,8 @@ const UploadButton = ({
               </div>
               <div className="grid grid-cols-2 gap-5 mx-5 gap-y-5">
                 <div>
-                  <h1 className="text-black">Quantity</h1>
-                  <Input />
+                  <h1 className="text-black">Quantity in weight</h1>
+                  <Input type="number" value={weight} onChange={e => setWeight(parseInt(e.target.value))}/>
                   <h1 className="text-xs flex justify-end">
                     Suported format: kg
                   </h1>
@@ -137,7 +184,12 @@ const UploadButton = ({
                 <div>
                   <h1 className="text-black">Location</h1>
                   <div className="flex items-center">
-                    <Input placeholder="Add Pickup Location" disabled value={lAddress} onChange={e => setLAddress(e.target.value)}/>
+                    <Input
+                      placeholder="Add Pickup Location"
+                      disabled
+                      value={lAddress}
+                      onChange={(e) => setLAddress(e.target.value)}
+                    />
                     <IoLocationOutline
                       onClick={handleLoadMap}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 cursor-pointer"
@@ -145,7 +197,7 @@ const UploadButton = ({
                   </div>
                 </div>
                 <div>
-                  {isLoading && <p>Loading map...</p>}
+                  {isLoading && <p>Loading map please wait...</p>}
                   {error && <p className="text-red-500">{error}</p>}
                   {showMap && (
                     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
@@ -174,8 +226,8 @@ const UploadButton = ({
                   Help center
                 </button>
                 <div className="space-x-5">
-                  <Button className="bg-white text-black">Cancel</Button>
-                  <Button className="bg-[#228B22] text-white">Upload</Button>
+                  <Button className="bg-white text-black" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                  <Button className="bg-[#228B22] text-white" onClick={handleSubmit}>Upload</Button>
                 </div>
               </div>
             </DialogDescription>
