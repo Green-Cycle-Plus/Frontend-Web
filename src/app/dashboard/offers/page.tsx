@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/card";
 import { EllipsisVertical, Loader2, Plus } from "lucide-react";
 
+import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
+import { WasteType } from "@/app/recyclers/register/page";
 import {
   Dialog,
   DialogContent,
@@ -19,13 +21,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { WasteType } from "@/app/recyclers/register/page";
 import {
   Select,
   SelectContent,
@@ -34,10 +29,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { config } from "@/config";
-import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { WASTE_CONTRACT_ADDRESS } from "@/constants";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { writeContract } from "@wagmi/core";
+import { useGetRecyclerOffers } from "@/hooks/use-get-offers";
+import { useReadRecyclers } from "@/hooks/use-get-recycler";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { useAccount, useWatchContractEvent } from "wagmi";
 const formSchema = z.object({
   waste_type: z.string().min(1, {
     message: "Waste type must be at least 1 characters",
@@ -49,6 +52,14 @@ const formSchema = z.object({
     message: "price must be at least 1 characters",
   }),
 });
+interface IOffer {
+  minQuantity: bigint;
+  name: string;
+  offerId?: bigint;
+  pricePerKg: bigint;
+  recyclerAddress: string;
+  recyclerId?: bigint;
+}
 const page = () => {
   const {
     register,
@@ -61,7 +72,31 @@ const page = () => {
   });
   const [wasteType, setwasteTypes] = useState<WasteType[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const getRecycler = useReadRecyclers();
+  const getRecyclerOffers = useGetRecyclerOffers();
+  const [offers, setOffers] = useState<IOffer[]>([]);
+  const [loading, setloading] = useState(false);
+  const [error, setError]= useState("");
+const account   = useAccount()
 
+  const fetchData = async () => {
+    setloading(true);
+    try {
+      const recycler = await getRecycler();
+  
+      const offerData = await getRecyclerOffers(recycler[0]);
+      await getWasteTypes();
+      setOffers(offerData as IOffer[]);
+
+      setloading(false);
+    } catch (error) {
+      console.error("An error occured while initializing", error);
+      setError("An error occured while initializing")
+      setloading(false);
+      // throw new Error("An error occured while initializing")
+  
+    }
+  };
   const getWasteTypes = async () => {
     try {
       const res = await axios.get(
@@ -72,26 +107,46 @@ const page = () => {
           },
         }
       );
-      console.log({ res });
+
       setwasteTypes(res?.data?.data);
     } catch (error) {
       console.error(error);
     }
   };
   useEffect(() => {
-    getWasteTypes();
-  }, []);
+    fetchData();
+  }, [account.address]);
+
+  useWatchContractEvent({
+    address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+    abi: WASTE_CONTRACT_ABI,
+    eventName: "OfferCreated",
+    onLogs(logs) {
+      const newOffer: IOffer = {
+        minQuantity: logs[0].args._miniQuantity!,
+        name: logs[0].args._wasteType!,
+        pricePerKg: logs[0].args._pricePerKg!,
+        recyclerAddress: logs[0].args.recycler!,
+      };
+      setOffers((prev) => [...prev, newOffer]);
+    },
+  });
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setSubmitting(true);
     try {
-      console.log({ data });
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
         address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createOffer",
         args: [data.waste_type, BigInt(data.price), BigInt(data.quantity)],
       });
-      console.log({ result });
+      const transactionReceipt = await waitForTransactionReceipt(config, {
+        hash: result,
+      });
+      if (transactionReceipt.status === "success") {
+        return transactionReceipt.transactionHash;
+      }
       reset();
     } catch (error) {
       console.error(error);
@@ -99,10 +154,20 @@ const page = () => {
       setSubmitting(false);
     }
   };
+  if(!account.address) return <div className="w-full h-screen flex items-center justify-center">
+ <w3m-connect-button/>
+</div>
+  if (loading)
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin h-10 w-10" />
+      </div>
+    );
   return (
     <div className="px-10">
       <div className="flex items-center justify-between w-full">
         <h1 className="text-3xl font-bold mb-6 text-[#228B22]">Offers</h1>
+
         {/* <Button>
 					Add <Plus />
 				</Button> */}
@@ -232,65 +297,50 @@ const page = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="flex-row w-full justify-between">
-            <CardTitle>500kg Of Glass</CardTitle>
-            {/* <CardDescription className="text-xl">Requests </CardDescription> */}
+        {offers.length > 0 ? (
+          offers.map((offer) => (
+            <Card>
+              <CardHeader className="flex-row w-full justify-between">
+                <CardTitle>
+                  {Number(offer.minQuantity.toString())}kg Of {offer.name}
+                </CardTitle>
+                {/* <CardDescription className="text-xl">Requests </CardDescription> */}
 
-            <EllipsisVertical />
-          </CardHeader>
-          <CardContent>
-            <p>
-              <span className="text-[#757575]">Price:</span> 10,000 tokens
-            </p>
-            <p>
-              <span className="text-[#757575]">Location:</span>Lagos
-            </p>
-            <p>
-              <span className="text-[#757575]">Quantity:</span> 500kg
-            </p>
-          </CardContent>
+                <EllipsisVertical />
+              </CardHeader>
+              <CardContent>
+                <p>
+                  <span className="text-[#757575]">Price:</span>{" "}
+                  {Number(offer.pricePerKg.toString())} Eth per KG
+                </p>
+                <p>
+                  <span className="text-[#757575]">Recycler Address: </span>
+                  {offer.recyclerAddress}
+                </p>
+                <p>
+                  <span className="text-[#757575]">Quantity: </span>{" "}
+                  {Number(offer.minQuantity.toString())}kg
+                </p>
+              </CardContent>
 
-          <CardFooter className="flex w-full justify-between">
-            <p className="text-[#757575]">
-              Waste type:{" "}
-              <Button className="rounded-full bg-[#228B22]">Glass</Button>
-            </p>
-            <Button variant={"outline"} className="text-red-500 py-2">
-              Remove
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex-row w-full justify-between">
-            <CardTitle>50kg Of Cardboard</CardTitle>
-            {/* <CardDescription className="text-xl">Requests </CardDescription> */}
-
-            <EllipsisVertical />
-          </CardHeader>
-          <CardContent>
-            <p>
-              <span className="text-[#757575]">Price:</span> 2,000 tokens
-            </p>
-            <p>
-              <span className="text-[#757575]">Location:</span>Abuja
-            </p>
-            <p>
-              <span className="text-[#757575]">Quantity:</span> 50kg
-            </p>
-          </CardContent>
-
-          <CardFooter className="flex w-full justify-between">
-            <p className="text-[#757575]">
-              Waste type:{" "}
-              <Button className="rounded-full bg-[#228B22]">Cardboard</Button>
-            </p>
-            <Button variant={"outline"} className="text-red-500 py-2">
-              Remove
-            </Button>
-          </CardFooter>
-        </Card>
+              <CardFooter className="flex w-full justify-between">
+                <p className="text-[#757575]">
+                  Waste type:
+                  <Button className="ml-2 rounded-full bg-[#228B22]">
+                    {offer.name}
+                  </Button>
+                </p>
+                <Button variant={"outline"} className="text-red-500 py-2">
+                  Remove
+                </Button>
+              </CardFooter>
+            </Card>
+          ))
+        ) : (
+          <div>
+            <p>No Available Offers</p>
+          </div>
+        )}
       </div>
     </div>
   );
