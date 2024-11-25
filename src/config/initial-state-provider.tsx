@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { cookieToInitialState, State } from "wagmi";
 import { config } from "@/config";
 import Web3ModalProvider from "@/context";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export function InitialStateProvider({
   cookie,
@@ -34,7 +34,7 @@ export function InitialStateProvider({
   if (!initialState)
     return (
       <div className="w-full min-h-screen flex items-center justify-center">
-        <Loader className="text-4xl w-16 h-16 animate-spin" />
+        <Loader2 className="text-4xl w-16 h-16 animate-spin text-[#228B22]" />
       </div>
     );
 

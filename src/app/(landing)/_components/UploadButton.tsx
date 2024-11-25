@@ -10,7 +10,7 @@ import {
 import UploadImage from "../_components/UploadImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, Loader } from "lucide-react";
+import { HelpCircle, Loader2 } from "lucide-react";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { IoLocationOutline } from "react-icons/io5";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
@@ -250,7 +250,7 @@ const UploadButton = ({
                     {submitting ? (
                       <span className="flex items-center">
                         Making Request{" "}
-                        <Loader className="animate-spin w-3 h-3" />
+                        <Loader2 className="animate-spin w-3 h-3" />
                       </span>
                     ) : (
                       "Make Request"
