@@ -4,12 +4,14 @@ import { Dialog } from "@/components/ui/dialog"
 import Image from "next/image"
 import UploadButton from "./UploadButton"
 
-export default function WasteRequestCard({price, quantity, wasteType, wasteImg, location}:{
+export default function WasteRequestCard({price, quantity, wasteType, wasteImg, location, offerId, recyclerId}:{
     price: number,
     quantity: number,
     location: string,
     wasteType: string,
-    wasteImg: string
+    wasteImg: string,
+    offerId: number,
+    recyclerId: number,
 }) {
   return (
     <Card className="w-full lg:w-[288px] rounded-[9.7px] bg-white p-4">
@@ -21,12 +23,12 @@ export default function WasteRequestCard({price, quantity, wasteType, wasteImg, 
         <div className="space-y-2 text-sm">
           <div className="flex gap-2">
             <span className="text-[#C0C0C0] font-normal text-sm">Price:</span>
-            <span className="font-normal text-brandText text-sm">{price}points</span>
+            <span className="font-normal text-brandText text-sm">{price} ether</span>
           </div>
           
           <div className="flex gap-2">
-            <span className="text-[#C0C0C0] font-normal text-sm">No:</span>
-            <span>{quantity}{wasteType}</span>
+            <span className="text-[#C0C0C0] font-normal text-sm">Min Quantity:</span>
+            <span>{quantity} kg of {wasteType}</span>
           </div>
           
           <div className="flex gap-2">
@@ -45,7 +47,7 @@ export default function WasteRequestCard({price, quantity, wasteType, wasteImg, 
           Upload
         </Button> */}
         <Dialog/>
-        <UploadButton />
+        <UploadButton offerId={offerId} recyclerId={recyclerId}/>
       </CardFooter>
     </Card>
   )
