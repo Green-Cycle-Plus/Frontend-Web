@@ -11,11 +11,7 @@ interface StepSidebarProps {
 export function StepSidebar({ steps, currentStepId }: StepSidebarProps) {
   console.log(currentStepId);
   return (
-    <div className="w-80  p-6 ">
-      <div className="mb-8 font-londorina">
-        <h1 className="text-[#228B22] text-2xl font-bold font-londrina ">Greencycle+</h1>
-      </div>
-
+    <div className="w-80 p-6 ">
       <div className="space-y-6 font-dms_sans">
         {steps.map((step, index) => (
           <div key={step.id} className="relative">

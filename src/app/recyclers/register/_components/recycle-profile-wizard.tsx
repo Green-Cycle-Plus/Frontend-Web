@@ -5,32 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
 import { WASTE_CONTRACT_ADDRESS } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import {
+  readContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import {
   FileText,
   FolderUp,
   HelpCircle,
   LucideProps,
-  Router,
+  // Router,
   ShieldCheck,
-  User,
+  User
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ForwardRefExoticComponent, RefAttributes, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAccount } from "wagmi";
 import * as z from "zod";
+import { WasteType } from "../page";
 import { StepSidebar } from "./step-sidebar";
 import { CompanyInformationStep } from "./steps/CompanyInformationStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { ServiceSetupStep } from "./steps/ServiceSetupStep";
 import { UploadDocumentStep } from "./steps/UploadDocumentStep";
 import axios from "axios";
-import { WasteType } from "../page";
-import { useRouter } from "next/navigation";
+
+
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -67,7 +74,7 @@ const initialSteps: Step[] = [
   },
   {
     id: 4,
-    title: "Step 3",
+    title: "Step 4",
     subtitle: "Confirmation and Approval",
     icon: ShieldCheck,
     status: "pending",
@@ -128,6 +135,7 @@ export default function CompanyProfileWizard({
   wasteTypes: WasteType[];
 }) {
   const account = useAccount();
+  const getRecycler = useReadRecyclers();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [currentStepId, setCurrentStepId] = useState(1);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -135,7 +143,6 @@ export default function CompanyProfileWizard({
     lng: number;
   } | null>(null);
   const router = useRouter();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const updateStepStatus = (stepId: number, newStatus: StepStatus) => {
     setSteps((prevSteps) =>
@@ -183,46 +190,39 @@ export default function CompanyProfileWizard({
       });
       const transactionReceipt = await waitForTransactionReceipt(config, {
         hash: result,
-      })
-      if(transactionReceipt.status === "success"){
+      });
+      if (transactionReceipt.status === "success") {
+        toast.success("Recycler profile created successfully");
         return transactionReceipt.transactionHash;
       }
-
- 
     } catch (error) {
       console.error("Error creating recycler onchain:", error);
+      toast.error("Failed to create recycler onchain");
       throw new Error("Failed to create recycler onchain");
     }
   };
 
-  const getRecycler = async (address: string) => {
-    try {
-      const result = await readContract(config, {
-        abi: WASTE_CONTRACT_ABI,
-        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
-        functionName: "recyclers",
-        args: [address as `0x${string}`],
-      });
-      return result;
-    } catch (error) {
-      console.error("Error getting recycler onchain:", error);
-      throw new Error("Failed to get recycler onchain");
-    }
-  };
+
+
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
       if (!account.address) {
+        toast.error("Wallet not connected");
         throw new Error("Wallet not connected");
       }
-      if (!selectedLocation)
+      if (!selectedLocation) {
+        toast.error(
+          "Location not selected, please select a location using the map"
+        );
         throw new Error(
           "Location not selected, please select a location using the map"
         );
+      }
       await createRecyclerOnchain(data, account.address);
-      const recyclerOnchain = await getRecycler(account.address);
-      console.log({recyclerOnchain})
+
+      const recyclerOnchain = await getRecycler();
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);
       companyLogo.append("upload_preset", "company_logos");
@@ -265,11 +265,7 @@ export default function CompanyProfileWizard({
       goToNextStep();
     } catch (error) {
       console.error("An errror occured: ", error);
-      toast({
-        title: "An error occured",
-        description: "Can't create recycler, please try again",
-        variant: "destructive",
-      });
+      toast.error("Can't create recycler, please try again");
     } finally {
       setLoading(false);
     }
