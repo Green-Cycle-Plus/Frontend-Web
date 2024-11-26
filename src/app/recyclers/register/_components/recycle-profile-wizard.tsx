@@ -4,30 +4,40 @@ import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { config } from "@/config";
-import { WAST_CONTRACT_ADDRESS } from "@/constants";
-import { toast } from "@/hooks/use-toast";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
+import { toast } from "sonner";
+import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { UploadDocumets } from "@/lib/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { readContract, writeContract } from "@wagmi/core";
+import {
+  readContract,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import {
   FileText,
   FolderUp,
   HelpCircle,
   LucideProps,
+  // Router,
   ShieldCheck,
-  User,
+  User
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ForwardRefExoticComponent, RefAttributes, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAccount } from "wagmi";
 import * as z from "zod";
+import { WasteType } from "../page";
 import { StepSidebar } from "./step-sidebar";
 import { CompanyInformationStep } from "./steps/CompanyInformationStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
 import { ServiceSetupStep } from "./steps/ServiceSetupStep";
 import { UploadDocumentStep } from "./steps/UploadDocumentStep";
 import axios from "axios";
+
+
 export type StepStatus = "completed" | "current" | "pending";
 
 export interface Step {
@@ -64,7 +74,7 @@ const initialSteps: Step[] = [
   },
   {
     id: 4,
-    title: "Step 3",
+    title: "Step 4",
     subtitle: "Confirmation and Approval",
     icon: ShieldCheck,
     status: "pending",
@@ -81,6 +91,8 @@ const companyInfoSchema = z.object({
 
 const serviceSetupSchema = z.object({
   wasteType: z.string().min(1, "Please select a waste type"),
+  min_weight: z.string().min(1, "Min weight is required"),
+  amount: z.string().min(1, "Amount is required"),
   capacity: z.string().min(1, "Capacity is required"),
   additionalServices: z.string().optional(),
 });
@@ -101,24 +113,36 @@ const fileSchema = z.custom<FileList>(
 
 const uploadDocumentSchema = z.object({
   logo: fileSchema,
-  documents: z
-    .array(z.any())
-    .min(1, "At least one document is required")
-    .max(5, "Maximum 5 documents allowed"),
+  documents: z.custom<File[]>(
+    (file: FileList) => {
+      if (!file) return false;
+      const maxSizeInBytes = 5 * 1024 * 1024; // Max file size: 5MB
+      const isValidSize = file.length > 0 && file[0].size <= maxSizeInBytes;
+      return isValidSize;
+    },
+    {
+      message: "Upload at least one document and document must not exceed 5MB",
+    }
+  ),
 });
 
 const formSchema = companyInfoSchema
   .merge(serviceSetupSchema)
   .merge(uploadDocumentSchema);
-
-export default function CompanyProfileWizard() {
+export default function CompanyProfileWizard({
+  wasteTypes,
+}: {
+  wasteTypes: WasteType[];
+}) {
   const account = useAccount();
+  const getRecycler = useReadRecyclers();
   const [steps, setSteps] = useState<Step[]>(initialSteps);
   const [currentStepId, setCurrentStepId] = useState(1);
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const updateStepStatus = (stepId: number, newStatus: StepStatus) => {
     setSteps((prevSteps) =>
@@ -155,7 +179,7 @@ export default function CompanyProfileWizard() {
     try {
       const result = await writeContract(config, {
         abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
+        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createRecycler",
         args: [
           address as `0x${string}`,
@@ -164,40 +188,41 @@ export default function CompanyProfileWizard() {
           parseInt(selectedLocation!.lng.toString()),
         ],
       });
-      return result;
+      const transactionReceipt = await waitForTransactionReceipt(config, {
+        hash: result,
+      });
+      if (transactionReceipt.status === "success") {
+        toast.success("Recycler profile created successfully");
+        return transactionReceipt.transactionHash;
+      }
     } catch (error) {
       console.error("Error creating recycler onchain:", error);
+      toast.error("Failed to create recycler onchain");
       throw new Error("Failed to create recycler onchain");
     }
   };
 
-  const getRecycler = async (address: string) => {
-    try {
-      const result = await readContract(config, {
-        abi: WASTE_CONTRACT_ABI,
-        address: WAST_CONTRACT_ADDRESS as `0x${string}`,
-        functionName: "recyclers",
-        args: [address as `0x${string}`],
-      });
-      return result;
-    } catch (error) {
-      console.error("Error getting recycler onchain:", error);
-      throw new Error("Failed to get recycler onchain");
-    }
-  };
+
+
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
       if (!account.address) {
+        toast.error("Wallet not connected");
         throw new Error("Wallet not connected");
       }
-      if (!selectedLocation)
+      if (!selectedLocation) {
+        toast.error(
+          "Location not selected, please select a location using the map"
+        );
         throw new Error(
           "Location not selected, please select a location using the map"
         );
+      }
       await createRecyclerOnchain(data, account.address);
-      const recyclerOnchain = await getRecycler(account.address);
+
+      const recyclerOnchain = await getRecycler();
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);
       companyLogo.append("upload_preset", "company_logos");
@@ -210,16 +235,20 @@ export default function CompanyProfileWizard() {
       const documeUpload = await UploadDocumets({ formData: documents });
 
       const payload = {
-        "companyId": Number(recyclerOnchain[0].toString()),
-        "companyName": data.companyName,
-        "email": data.email,
-        "phoneNumber": data.phoneNumber,
-        "physicalAddress": data.location,
-        "lat": selectedLocation.lat,
-        "lon": selectedLocation.lng,
-        "licenseNumber": data.registrationNumber,
-        "licenseDocument": documeUpload?.url,
-        "companyLogo": logoUpload?.url,
+        companyId: Number(recyclerOnchain[0].toString()),
+        companyName: data.companyName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        physicalAddress: data.location,
+        lat: selectedLocation.lat,
+        lon: selectedLocation.lng,
+        licenseNumber: data.registrationNumber,
+        licenseDocument: documeUpload?.url,
+        companyLogo: logoUpload?.url,
+        wasteTypeId: data.wasteType,
+        min_weight: Number(data.min_weight),
+        amount: Number(data.amount),
+        description: data.additionalServices,
       };
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/company/create`,
@@ -227,31 +256,19 @@ export default function CompanyProfileWizard() {
         {
           method: "POST",
           headers: {
-            "x-api-key":
-              "c144fca11d1c9453d319eb71a823fca1a6facffa9b534cd6b825c36e57346c40",
+            "x-api-key": process.env.NEXT_PUBLIC_BACKEND_API_KEY,
           },
         }
       );
-      
-     
+
       console.log("final response", response);
+      goToNextStep();
     } catch (error) {
       console.error("An errror occured: ", error);
-      toast({
-        title: "An error occured",
-        description: "Can't create recycler, please try again",
-        variant: "destructive",
-      });
+      toast.error("Can't create recycler, please try again");
     } finally {
       setLoading(false);
     }
-
-    // if (currentStep < steps.length - 1) {
-    //   setCurrentStep(currentStep + 1)
-    // } else {
-
-    // Here you would typically send the data to your backend
-    // }
   };
 
   const handleNextStep = async () => {
@@ -279,8 +296,10 @@ export default function CompanyProfileWizard() {
     if (isValid) {
       if (currentStepId < steps.length - 1) {
         goToNextStep();
-      } else {
+      } else if (currentStepId === steps.length - 1) {
         methods.handleSubmit(onSubmit)();
+      } else {
+        router.push("/dashboard");
       }
     }
   };
@@ -296,7 +315,7 @@ export default function CompanyProfileWizard() {
           />
         );
       case 2:
-        return <ServiceSetupStep useForm={methods} />;
+        return <ServiceSetupStep wasteTypes={wasteTypes} useForm={methods} />;
       case 3:
         return <UploadDocumentStep useForm={methods} />;
       case 4:
@@ -322,7 +341,7 @@ export default function CompanyProfileWizard() {
                   Help center
                 </Link>
                 <div className="space-x-2">
-                  {currentStepId > 1 && (
+                  {currentStepId > 1 && currentStepId < steps.length && (
                     <Button
                       type="button"
                       variant="outline"
@@ -335,12 +354,14 @@ export default function CompanyProfileWizard() {
                     type="button"
                     onClick={handleNextStep}
                     disabled={loading}
-                    className="bg-black text-white hover:bg-black/90"
+                    className="bg-black w-fit text-white hover:bg-black/90"
                   >
                     {loading
                       ? "Loading..."
                       : currentStepId === steps.length - 1
                       ? "Submit"
+                      : currentStepId === steps.length
+                      ? "Go to dashboard"
                       : "Next"}
                   </Button>
                 </div>

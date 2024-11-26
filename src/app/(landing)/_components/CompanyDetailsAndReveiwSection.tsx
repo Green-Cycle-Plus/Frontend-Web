@@ -9,9 +9,9 @@ const links = [
   { name: "Items", href: "#", value: "items" },
   { name: "Reviews", href: "#", value: "reviews" },
   { name: "About", href: "#", value: "about" },
-  { name: "Shop Policy", href: "#", value: "shop-policy" },
+  // { name: "Shop Policy", href: "#", value: "shop-policy" },
 ];
-const CompanyDetailsAndReveiwSection = () => {
+const CompanyDetailsAndReveiwSection = ({ company }: { company?: Company }) => {
   const [activeTab, setActiveTab] = useState("items");
 
   return (
@@ -34,7 +34,7 @@ const CompanyDetailsAndReveiwSection = () => {
           ))}
         </div>
       </div>
-      {activeTab === "items" && <WasteRequests />}
+      {activeTab === "items" && <WasteRequests companyId={company?.companyId}/>}
 
       {activeTab === "reviews" && (
         <div className="w-full">
@@ -42,9 +42,7 @@ const CompanyDetailsAndReveiwSection = () => {
         </div>
       )}
 
-      {activeTab === "about" && (
-        <ReviewAboutSection/>
-      )}
+      {activeTab === "about" && <ReviewAboutSection company={company} />}
     </div>
   );
 };

@@ -1,16 +1,9 @@
 'use client'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import CategoryCard from './CategoryCard'
 import CompanyCard from './CompanyCard'
-import axios from 'axios'
 
 const CompanyHero = () => {
-    const [companies, setCompanies] = useState<Company[]>([]);
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState<string | null>(null);
-
     return (
         <>       
          <div>
@@ -45,13 +38,9 @@ const [error, setError] = useState<string | null>(null);
                     </div>
                 </div>
             </section>
-            <div className='flex justify-center mt-10'>
-                <h1 className='text-4xl font-bold'>Find by category</h1>
-            </div>
         </div>
-        <CategoryCard companies={companies}/>
         <div className='ml-5 mt-10'>
-            <h1 className='text-2xl font-bold ml-10'>Recommended Companies</h1>
+            <h1 className='text-2xl font-bold ml-7'>Recommended Companies</h1>
         </div>
         <CompanyCard/>
         </>
