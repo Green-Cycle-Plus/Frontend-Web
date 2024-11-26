@@ -223,6 +223,8 @@ export default function CompanyProfileWizard({
       await createRecyclerOnchain(data, account.address);
 
       const recyclerOnchain = await getRecycler();
+      console.log({
+        recyclerOnchain,})
       const companyLogo = new FormData();
       companyLogo.append("file", data.logo[0]);
       companyLogo.append("upload_preset", "company_logos");
@@ -235,7 +237,7 @@ export default function CompanyProfileWizard({
       const documeUpload = await UploadDocumets({ formData: documents });
 
       const payload = {
-        companyId: Number(recyclerOnchain[0].toString()),
+        companyId: Number(recyclerOnchain?.id.toString()),
         companyName: data.companyName,
         email: data.email,
         phoneNumber: data.phoneNumber,
