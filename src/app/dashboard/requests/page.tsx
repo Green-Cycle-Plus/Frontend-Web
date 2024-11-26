@@ -1,26 +1,73 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import RequestDataTable from "@/components/dashboard/requestTable";
+import { Button } from "@/components/ui/button";
+import { useAccount } from "wagmi";
+import { useRecyclerInfo, useRecyclerRequests } from "@/hooks/use--read-recyclers";
 
-const page = () => {
+const Page = () => {
+	const [requests, setRequests] = useState(null || {});
+	const { address } = useAccount();
+	const { info: recyclerInfo } = useRecyclerInfo();
+	const { requests: recyclerRequests } = useRecyclerRequests();
+
+	useEffect(() => {
+		// if (recyclerInfo) {
+		// 	setInfo(recyclerInfo);
+		// 	console.log({ ...recyclerInfo }, "address");
+
+		// 	// Check if the connected address matches the recycler's address
+		// 	if (address && recyclerInfo?.recyclerAddress === address) {
+		// 		console.log("Connected address matches the recycler's address.");
+		// 	} else {
+		// 		console.log("Connected address does not match the recycler's address.");
+		// 	}
+		// }
+
+		if (recyclerRequests) {
+			setRequests(recyclerRequests);
+			console.log({ ...recyclerRequests }, "address");
+
+			// Check if the connected address matches the recycler's address
+			// if (address && recyclerInfo?.recyclerAddress === address) {
+			// 	console.log("Connected address matches the recycler's address.");
+			// } else {
+			// 	console.log("Connected address does not match the recycler's address.");
+			// }
+		}
+	}, [recyclerRequests, address]);
+
+	const serializeInfo = (data) => {
+		// Convert BigInt to string for serialization
+		return JSON.stringify(data, (key, value) => (typeof value === "bigint" ? value.toString() : value));
+	};
+
 	return (
 		<div className="px-10">
 			<div className="flex items-center justify-between w-full">
 				<h1 className="text-3xl font-bold mb-6 text-[#228B22]">Request</h1>
-
 				<Image
 					src="/filter.svg"
 					alt="filter"
 					width={30}
 					height={30}
 				/>
+				{/* <Button
+					onClick={() => {
+						setInfo(recyclerInfo);
+					}}>
+					Request Recycler
+				</Button>{" "} */}
+				{/* Update to set info */}
 			</div>
-
+			{requests && <div>{serializeInfo(requests)}</div>}
+			{/* Display the info if it exists */}
 			<div>
-				<RequestDataTable />
+				<RequestDataTable requests={requests} />
 			</div>
 		</div>
 	);
 };
 
-export default page;
+export default Page;

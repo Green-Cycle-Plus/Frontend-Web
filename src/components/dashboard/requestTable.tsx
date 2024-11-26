@@ -15,31 +15,57 @@ type Request = {
 	status: "Accepted" | "Pending" | "Rejected";
 };
 
-export const requests: Request[] = [
-	{
-		id: "01",
-		type: "plastics",
-		quantity: 120,
-		location: "Wuse, Abuja",
-		status: "Pending",
-	},
-	{
-		id: "02",
-		type: "glass",
-		quantity: 400,
-		location: "Jabi, Abuja",
-		status: "Accepted",
-	},
-	{
-		id: "03",
-		type: "Paper",
-		quantity: 50,
-		location: "Lugbe, Abuja",
-		status: "Rejected",
-	},
-];
+type BlockRequest = {
+	id: number;
 
-export const columns: ColumnDef<Request>[] = [
+	userAddress: string;
+
+	recyclerAddress: string;
+
+	offerId: number;
+
+	weight: number;
+
+	valuedAt: number;
+
+	amountPaid: number;
+
+	isCompleted: boolean;
+
+	isAccepted: boolean;
+
+	assignedCollector: string;
+
+	escrowRequestID: number;
+
+	status: number;
+};
+
+// export const requests: Request[] = [
+// 	{
+// 		id: "01",
+// 		type: "plastics",
+// 		quantity: 120,
+// 		location: "Wuse, Abuja",
+// 		status: "Pending",
+// 	},
+// 	{
+// 		id: "02",
+// 		type: "glass",
+// 		quantity: 400,
+// 		location: "Jabi, Abuja",
+// 		status: "Accepted",
+// 	},
+// 	{
+// 		id: "03",
+// 		type: "Paper",
+// 		quantity: 50,
+// 		location: "Lugbe, Abuja",
+// 		status: "Rejected",
+// 	},
+// ];
+
+export const columns: ColumnDef<BlockRequest>[] = [
 	{
 		accessorKey: "id",
 		header: "ID",
@@ -49,7 +75,7 @@ export const columns: ColumnDef<Request>[] = [
 		header: "Type",
 	},
 	{
-		accessorKey: "quantity",
+		accessorKey: "weight",
 		header: "Quantity",
 	},
 	{
@@ -62,11 +88,13 @@ export const columns: ColumnDef<Request>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className="text-sm">
-					{row.original.status === "Pending" && <div className="flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-full px-3 py-1 w-max">Pending</div>}
+					{row.original.status === 0 && <div className="flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-full px-3 py-1 w-max">Pending</div>}
 
-					{row.original.status === "Accepted" && <div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">Accepted</div>}
+					{row.original.status === 1 && <div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">Accepted</div>}
 
-					{row.original.status === "Rejected" && <div className="flex items-center justify-center bg-red-100 text-red-600 rounded-full px-3 py-1 w-max">Rejected</div>}
+					{row.original.status === 2 && <div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">Completed</div>}
+
+					{row.original.status === 3 && <div className="flex items-center justify-center bg-red-100 text-red-600 rounded-full px-3 py-1 w-max">Cancelled</div>}
 				</div>
 			);
 		},
@@ -88,7 +116,7 @@ export const columns: ColumnDef<Request>[] = [
 		},
 	},
 	{
-		accessorKey: "Actions",
+		accessorKey: "details",
 		header: () => <div className="text-left"></div>,
 		cell: ({ row }) => {
 			return <Details />;
@@ -152,7 +180,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 	);
 }
 
-export default function RequestDataTable() {
+export default function RequestDataTable({ requests }: { requests: BlockRequest[] }) {
 	return (
 		<div className="container mx-auto py-10">
 			<DataTable
