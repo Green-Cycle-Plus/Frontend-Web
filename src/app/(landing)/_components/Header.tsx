@@ -23,7 +23,7 @@ const navigationItems = [
   { name: "Home", href: "/" },
   { name: "Browse Offers", href: "/companies" },
   { name: "Register as a recycler", href: "/recyclers/register" },
-  { name: "Contact us", href: "/contact" },
+  // { name: "Contact us", href: "/contact" },
 ];
 
 const Header = () => {
@@ -48,9 +48,9 @@ const Header = () => {
           <Link href="/recyclers/register" className="text-[#797979] hover:text-gray-900">
             Register as a Recycler
           </Link>
-          <Link href="/contact" className="text-[#797979] hover:text-gray-900">
+{/*           <Link href="/contact" className="text-[#797979] hover:text-gray-900">
             Contact us
-          </Link>
+          </Link> */}
           <Link href="/blog" className="text-[#797979] hover:text-gray-900">
             Blog
           </Link>
