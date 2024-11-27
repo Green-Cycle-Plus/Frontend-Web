@@ -46,7 +46,7 @@ export interface IRequest {
   offerId: number;
   longitude: number;
   latitude: number;
-  location:string;
+  location: string;
   userAddress: `0x${string}`;
   isCompleted: boolean;
   status: number;
@@ -96,10 +96,10 @@ const page = () => {
       // throw new Error("An error occured while initializing")
     }
   };
-console.log({role})
+  console.log({ role });
   useEffect(() => {
     if (role) {
-    //   if (role[0] !== "Recycler") router.push("/");
+      //   if (role[0] !== "Recycler") router.push("/");
       fetchData();
     }
   }, [role]);

@@ -23,6 +23,7 @@ import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { useAccount, useWatchContractEvent } from "wagmi";
 import { toast } from "sonner";
+import { formatEther, parseEther } from "viem";
 const formSchema = z.object({
 	waste_type: z.string().min(1, {
 		message: "Waste type must be at least 1 characters",
@@ -119,7 +120,7 @@ const page = () => {
 				abi: WASTE_CONTRACT_ABI,
 				address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
 				functionName: "createOffer",
-				args: [data.waste_type, BigInt(data.price), BigInt(data.quantity)],
+				args: [data.waste_type, parseEther(data.price), BigInt(data.quantity)],
 			});
 			const transactionReceipt = await waitForTransactionReceipt(config, {
 				hash: result,
@@ -208,7 +209,7 @@ const page = () => {
 										<Label
 											htmlFor="quantity"
 											className="">
-											Quantity
+											Min Quantity
 										</Label>
 										<Input
 											id="quantity"
@@ -218,7 +219,7 @@ const page = () => {
 												required: "Quantity is required",
 											})}
 											className="col-span-3 w-full"
-											placeholder="Enter price"
+											placeholder="8 KG"
 										/>
 										{errors.quantity && <p className="text-red-500 text-sm ">{`${errors.quantity.message}`}</p>}
 										<p className="text-xs text-gray-400 text-right -mt-4">Supported format: Kg</p>
@@ -288,7 +289,7 @@ const page = () => {
 							</CardHeader>
 							<CardContent>
 								<p>
-									<span className="text-[#757575]">Price:</span> {Number(offer.pricePerKg.toString())} Eth per KG
+									<span className="text-[#757575]">Price:</span> {formatEther(offer.pricePerKg)} Eth per KG
 								</p>
 								<p>
 									<span className="text-[#757575]">Recycler Address: </span>
