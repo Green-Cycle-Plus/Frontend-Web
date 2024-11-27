@@ -59,12 +59,7 @@ const Page = () => {
 					width={30}
 					height={30}
 				/>
-				<Button
-					onClick={() => {
-						setRequests(recyclerRequests);
-					}}>
-					Request Recycler
-				</Button>{" "}
+
 				{/* Update to set info */}
 			</div>
 
