@@ -115,7 +115,13 @@ const UploadButton = ({
   };
 
   async function handleSubmit() {
-    if (!weight || !selectedLocation || !offerId || !recyclerId)
+    console.log({
+      weight,
+      selectedLocation,
+      offerId,
+      recyclerId,
+    })
+    if (!weight || !selectedLocation || typeof offerId !== "number"  || !recyclerId)
       return toast.error("Missing fields, please fill in all fields...");
 
     try {

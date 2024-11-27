@@ -235,7 +235,7 @@ export default function CompanyProfileWizard({
       }
       const logoUpload = await UploadDocumets({ formData: companyLogo });
       const documeUpload = await UploadDocumets({ formData: documents });
-
+console.log("Recycler ID: ", Number(recyclerOnchain?.id.toString()))
       const payload = {
         companyId: Number(recyclerOnchain?.id.toString()),
         companyName: data.companyName,
