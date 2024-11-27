@@ -36,7 +36,7 @@ const UserSidebar = () => {
 			},
 			{
 				title: "Requests",
-				href: "/userDashboard/requests",
+				href: "/userDashboard/userRequest",
 				icon: "/trash.svg",
 			},
 			{

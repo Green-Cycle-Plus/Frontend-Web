@@ -1,27 +1,58 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import RequestDataTable from "@/components/dashboard/requestTable";
-import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
-import { useRecyclerRequests } from "@/hooks/use--read-recyclers";
-import { useReadRecyclers } from "@/hooks/use-get-recycler";
+import { useUserRequests } from "@/hooks/use--read-recyclers";
 import { Loader2 } from "lucide-react";
+import { useGetUser } from "@/hooks/use-get-user";
 
+type UserRequest = {
+	wasteType: string;
+
+	id: bigint;
+
+	escrowRequestID: bigint;
+
+	amountPaid: bigint;
+
+	weight: number;
+
+	valuedAt: bigint;
+
+	offerId: number;
+
+	longitude: number;
+
+	latitude: number;
+
+	userAddress: string;
+
+	isCompleted: boolean;
+
+	status: number;
+
+	recyclerAddress: string;
+
+	assignedCollector: string;
+
+	isAccepted: boolean;
+
+	location: string;
+};
 const Page = () => {
-	const recyclerRequests = useRecyclerRequests();
-	const [requests, setRequests] = useState(null || {});
+	const userRequests = useUserRequests();
+	const [requests, setRequests] = useState<UserRequest[]>([]);
 	const { address } = useAccount();
 	const [loading, setloading] = useState(false);
-	const getRecycler = useReadRecyclers();
+	const getUser = useGetUser();
 
-	const fetchRecycleRequest = async () => {
+	const fetchUserRequest = async () => {
 		setloading(true);
 		try {
-			const { id } = await getRecycler();
-
-			const recyclerRequest = await recyclerRequests(id);
-			setRequests(recyclerRequest);
+			const { userAddress } = await getUser();
+			const userRequest = await userRequests(userAddress);
+			setRequests([...userRequest]);
 
 			setloading(false);
 		} catch (error) {
@@ -32,8 +63,7 @@ const Page = () => {
 	};
 
 	useEffect(() => {
-		fetchRecycleRequest();
-		// fetchRequests();
+		fetchUserRequest();
 	}, [address]);
 
 	if (!address)

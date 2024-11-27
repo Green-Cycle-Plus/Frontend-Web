@@ -19,6 +19,7 @@ import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { toast } from "sonner";
 import { parseUnits } from "viem";
+import { getAddressFromLatLng } from "@/lib/utils";
 
 if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY) {
   throw new Error("GOOGLE_API_KEY is not defined");
@@ -102,17 +103,17 @@ const UploadButton = ({
     setLAddress(address);
   };
 
-  const getAddressFromLatLng = async (lat: number, lng: number) => {
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`;
+  // const getAddressFromLatLng = async (lat: number, lng: number) => {
+  //   const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`;
 
-    const response = await fetch(geocodeUrl);
-    const data = await response.json();
+  //   const response = await fetch(geocodeUrl);
+  //   const data = await response.json();
 
-    if (data.results && data.results.length > 0) {
-      return data.results[0].formatted_address;
-    }
-    return "Address not found";
-  };
+  //   if (data.results && data.results.length > 0) {
+  //     return data.results[0].formatted_address;
+  //   }
+  //   return "Address not found";
+  // };
 
   async function handleSubmit() {
     if (
