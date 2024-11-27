@@ -49,6 +49,28 @@ const useRecyclerRequests = () => {
 	);
 };
 
+const useUserRequests = () => {
+	const account = useAccount();
+	return useCallback(
+		async (address: `0x${string}`) => {
+			try {
+				if (!account?.address) throw new Error("Please connect Wallet");
+				const info = await readContract(config, {
+					abi: WASTE_CONTRACT_ABI,
+					address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+					functionName: "getAllUserRequests",
+					args: [address],
+				});
+				return info;
+			} catch (error) {
+				console.error("Error getting recycler requests", error);
+				throw new Error("Failed to get recycler offers ");
+			}
+		},
+		[account?.address]
+	);
+};
+
 const useAcceptRequest = (requestId: bigint, collectorId: `0x${string}`, price: bigint) => {
 	const account = useAccount();
 	return useCallback(async () => {
@@ -126,4 +148,4 @@ const useGetRecyclerCollectors = () => {
 // 	};
 // }
 
-export { useRecyclerRequests, useAcceptRequest, useGetRecyclerOffer, useGetRecyclerCollectors };
+export { useRecyclerRequests, useAcceptRequest, useGetRecyclerOffer, useGetRecyclerCollectors, useUserRequests };

@@ -4,24 +4,29 @@ import Image from "next/image";
 import RequestDataTable from "@/components/dashboard/requestTable";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
-import { useRecyclerRequests } from "@/hooks/use--read-recyclers";
+import { useRecyclerRequests, useUserRequests } from "@/hooks/use--read-recyclers";
 import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { Loader2 } from "lucide-react";
+import { useGetUser } from "@/hooks/use-get-user";
 
 const Page = () => {
 	const recyclerRequests = useRecyclerRequests();
+	const userRequests = useUserRequests();
 	const [requests, setRequests] = useState(null || {});
 	const { address } = useAccount();
 	const [loading, setloading] = useState(false);
 	const getRecycler = useReadRecyclers();
+	const getUser = useGetUser();
 
-	const fetchRecycleRequest = async () => {
+	const fetchUserRequest = async () => {
 		setloading(true);
 		try {
-			const { id } = await getRecycler();
+			// const { id } = await getRecycler();
+			const { userAddress } = await getUser();
 
-			const recyclerRequest = await recyclerRequests(id);
-			setRequests(recyclerRequest);
+			// const recyclerRequest = await recyclerRequests(id);
+			const userRequest = await userRequests(userAddress);
+			setRequests(userRequest);
 
 			setloading(false);
 		} catch (error) {
@@ -32,7 +37,7 @@ const Page = () => {
 	};
 
 	useEffect(() => {
-		fetchRecycleRequest();
+		fetchUserRequest();
 		// fetchRequests();
 	}, [address]);
 
