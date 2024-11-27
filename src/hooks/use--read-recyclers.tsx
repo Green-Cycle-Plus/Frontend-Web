@@ -54,14 +54,14 @@ const useAcceptRequest = (requestId: bigint, collectorId: `0x${string}`, price: 
 	return useCallback(async () => {
 		try {
 			if (!account?.address) throw new Error("Please connect Wallet");
-			const info = await writeContract(config, {
+			const hash = await writeContract(config, {
 				abi: WASTE_CONTRACT_ABI,
 				address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
 				functionName: "acceptRequest",
 				args: [requestId, collectorId],
 				value: price,
 			});
-			return info;
+			return hash;
 		} catch (error) {
 			console.error("Error accepting request", error);
 			throw new Error("Failed to accept request");

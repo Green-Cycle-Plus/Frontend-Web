@@ -4,12 +4,17 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { waitForTransactionReceipt } from "@wagmi/core";
+import { config } from "@/config";
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Details from "./Details";
 import { getAddressFromLatLng } from "@/lib/utils";
+import { Loader } from "lucide-react";
+
+import { toast } from "sonner";
 
 import { useAcceptRequest, useGetRecyclerCollectors } from "@/hooks/use--read-recyclers";
 
@@ -119,6 +124,40 @@ function ActionButtons({ status, id, valueAt }: { status: number; id: number; va
 	const [selectedCollector, setSelectedCollector] = useState<string | null>(null);
 
 	const acceptRequest = useAcceptRequest(BigInt(id), selectedCollector as `0x${string}`, valueAt);
+	const [submitting, setSubmitting] = useState(false);
+
+	async function handleSubmit() {
+		// if (!weight || !selectedLocation || !offerId || !recyclerId) return toast.error("Missing fields, please fill in all fields...");
+
+		try {
+			setSubmitting(true);
+			const hash = await acceptRequest();
+
+			const transactionReceipt = await waitForTransactionReceipt(config, {
+				hash: hash,
+			});
+
+			if (transactionReceipt.status === "success") {
+				toast.success("Request created successfully");
+				// setIsDialogOpen(false);
+				setSubmitting(false);
+				return;
+			} else if (transactionReceipt.status === "reverted") {
+				setSubmitting(false);
+				return toast.error("Request creation was not completed successfully, transaction was reverted...");
+			} else {
+				setSubmitting(false);
+				return toast.error("An unexpected error occured!");
+			}
+		} catch (error) {
+			setSubmitting(false);
+			console.log(`An unexpected error occured! ${error}`);
+			return toast.error(`An unexpected error occured! ${error}`);
+		} finally {
+			setSubmitting(false);
+		}
+	}
+
 	useEffect(() => {
 		const fetchCollectors = async () => {
 			const result = await recycleCollectors();
@@ -145,29 +184,40 @@ function ActionButtons({ status, id, valueAt }: { status: number; id: number; va
 							<DialogTitle>Choose a Collector</DialogTitle>
 						</DialogHeader>
 						<div className="grid gap-4 py-4 w-full">
-							<Select onValueChange={(address) => setSelectedCollector(address)}>
+							<Select
+								// value={selectedCollector}
+								onValueChange={(address) => setSelectedCollector(address)}>
 								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Assign a collector" />
 								</SelectTrigger>
 								<SelectContent>
 									<SelectGroup>
 										<SelectLabel>Collectors</SelectLabel>
-										{collectorsF?.map((collector) => (
-											<SelectItem
-												key={collector.collectorAddress}
-												value={collector.collectorAddress}>
-												{collector.name}
-											</SelectItem>
-										))}
+										{collectorsF?.map((collector) => {
+											console.log(collector);
+											return (
+												<SelectItem
+													key={collector.id}
+													value={collector.collectorAddress}>
+													{collector.name}
+												</SelectItem>
+											);
+										})}
 									</SelectGroup>
 								</SelectContent>
 							</Select>
 						</div>
 						<DialogFooter>
 							<Button
-								// type="submit"
-								onClick={() => acceptRequest()}>
-								Select Recycler
+								onClick={handleSubmit}
+								disabled={submitting}>
+								{submitting ? (
+									<span className="flex items-center">
+										Selecting Collector <Loader className="animate-spin w-3 h-3" />
+									</span>
+								) : (
+									" Select Collector"
+								)}
 							</Button>
 						</DialogFooter>
 					</DialogContent>
