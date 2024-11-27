@@ -5,12 +5,14 @@ import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { getAddressFromLatLng } from "@/lib/getActualAddress";
 
 if (!process.env.NEXT_PUBLIC_GOOGLE_API_KEY) {
   throw new Error("GOOGLE_API_KEY is not defined");
 }
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+
 
 const mapContainerStyle = {
   width: "100%",
@@ -102,18 +104,7 @@ export function CompanyInformationStep({
 
     useForm.setValue("location", address ?? "");
   };
-  const getAddressFromLatLng = async (lat: number, lng: number) => {
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`;
-
-    const response = await fetch(geocodeUrl);
-    const data = await response.json();
-
-    if (data.results && data.results.length > 0) {
-      return data.results[0].formatted_address;
-    }
-    return "Address not found";
-  };
-
+  
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-[#4CAF50] ">

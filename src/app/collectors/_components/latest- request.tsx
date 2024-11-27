@@ -4,9 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { IRequest } from "@/app/dashboard/page";
 
-interface Request  {
+type Request = {
 	id: string;
 	type: string;
 	quantity: number;
@@ -14,47 +13,46 @@ interface Request  {
 	status: "Accepted" | "Pending" | "Rejected";
 };
 
-// export const requests: Request[] = [
-// 	{
-// 		id: "01",
-// 		type: "plastics",
-// 		quantity: 120,
-// 		location: "Wuse, Abuja",
-// 		status: "Pending",
-// 	},
-// 	{
-// 		id: "02",
-// 		type: "glass",
-// 		quantity: 400,
-// 		location: "Jabi, Abuja",
-// 		status: "Accepted",
-// 	},
-// 	{
-// 		id: "03",
-// 		type: "Paper",
-// 		quantity: 50,
-// 		location: "Lugbe, Abuja",
-// 		status: "Rejected",
-// 	},
-// ];
+export const requests: Request[] = [
+	{
+		id: "01",
+		type: "plastics",
+		quantity: 120,
+		location: "Wuse, Abuja",
+		status: "Pending",
+	},
+	{
+		id: "02",
+		type: "glass",
+		quantity: 400,
+		location: "Jabi, Abuja",
+		status: "Accepted",
+	},
+	{
+		id: "03",
+		type: "Paper",
+		quantity: 50,
+		location: "Lugbe, Abuja",
+		status: "Rejected",
+	},
+];
 
-export const columns: ColumnDef<IRequest>[] = [
+export const columns: ColumnDef<Request>[] = [
 	{
 		accessorKey: "id",
 		header: "ID",
 	},
 	{
-		accessorKey: "wasteType",
+		accessorKey: "type",
 		header: "Type",
 	},
 	{
-		accessorKey: "weight",
+		accessorKey: "quantity",
 		header: "Quantity",
 	},
 	{
 		accessorKey: "location",
 		header: "Location",
-		
 	},
 	{
 		accessorKey: "Status",
@@ -62,11 +60,11 @@ export const columns: ColumnDef<IRequest>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className="text-sm">
-					{row.original.status === 0 && <div className="flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-full px-3 py-1 w-max">Pending</div>}
+					{row.original.status === "Pending" && <div className="flex items-center justify-center bg-yellow-100 text-yellow-600 rounded-full px-3 py-1 w-max">Pending</div>}
 
-					{row.original.isAccepted  && <div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">Accepted</div>}
+					{row.original.status === "Accepted" && <div className="flex items-center justify-center bg-green-100 text-green-600 rounded-full px-3 py-1 w-max">Accepted</div>}
 
-					{row.original.status === 2  && <div className="flex items-center justify-center bg-red-100 text-red-600 rounded-full px-3 py-1 w-max">Rejected</div>}
+					{row.original.status === "Rejected" && <div className="flex items-center justify-center bg-red-100 text-red-600 rounded-full px-3 py-1 w-max">Rejected</div>}
 				</div>
 			);
 		},
@@ -129,7 +127,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 	);
 }
 
-const DataTableColumn = ({ requests }: { requests: IRequest[] }) => { 
+export default function LatestRequests() {
 	return (
 		<div className="container mx-auto py-10">
 			<DataTable
@@ -139,5 +137,3 @@ const DataTableColumn = ({ requests }: { requests: IRequest[] }) => {
 		</div>
 	);
 }
-
-export default DataTableColumn

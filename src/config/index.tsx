@@ -1,14 +1,7 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 import { cookieStorage, createStorage } from "wagmi";
 import {
-  // mainnet,
-  // arbitrum,
-  // optimism,
   liskSepolia,
-  // base,
-  // lisk,
-  // baseSepolia,
-  // liskSepolia,
 } from "wagmi/chains";
 
 // Get projectId from <https://cloud.reown.com>
@@ -41,7 +34,7 @@ export const config = defaultWagmiConfig({
   auth: {
     // @ts-expect-error needed by typescript linting
     email: true,
-    socials: ["google", "x", "github", "discord", "apple"],
+    socials: ["google"],
     showWallets: true,
     walletFeatures: true,
   },

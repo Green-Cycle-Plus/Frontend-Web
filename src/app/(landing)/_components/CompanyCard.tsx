@@ -27,7 +27,7 @@ const CompanyCard = () => {
           `${process.env.NEXT_PUBLIC_BASE_URL!}/company`,
           {
             headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_API_KEY!,
+              "x-api-key": process.env.NEXT_PUBLIC_BACKEND_API_KEY!,
             },
           }
         );
