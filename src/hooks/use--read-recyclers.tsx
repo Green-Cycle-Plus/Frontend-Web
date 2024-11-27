@@ -5,42 +5,48 @@ import { readContract, writeContract } from "@wagmi/core";
 import { useCallback } from "react";
 import { useAccount } from "wagmi";
 
-const useRecyclerInfo = (requestId: bigint) => {
-	const account = useAccount();
-	return useCallback(async () => {
-		try {
-			if (!account?.address) throw new Error("Please connect Wallet");
-			const info = await readContract(config, {
-				abi: WASTE_CONTRACT_ABI,
-				address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
-				functionName: "getRecyclerById",
-				args: [requestId],
-			});
-			return info;
-		} catch (error) {
-			console.error("Error getting recycler info", error);
-			throw new Error("Failed to get recycler info");
-		}
-	}, [requestId, account?.address]);
-};
+// const useRecyclerInfo = (requestId: bigint) => {
+// 	const account = useAccount();
+// 	return useCallback(
+// 		async (requestId: bigint) => {
+// 			try {
+// 				if (!account?.address) throw new Error("Please connect Wallet");
+// 				const info = await readContract(config, {
+// 					abi: WASTE_CONTRACT_ABI,
+// 					address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+// 					functionName: "getRecyclerById",
+// 					args: [requestId],
+// 				});
+// 				return info;
+// 			} catch (error) {
+// 				console.error("Error getting recycler info", error);
+// 				throw new Error("Failed to get recycler info");
+// 			}
+// 		},
+// 		[requestId, account?.address]
+// 	);
+// };
 
-const useRecyclerRequests = (requestId: bigint) => {
+const useRecyclerRequests = () => {
 	const account = useAccount();
-	return useCallback(async () => {
-		try {
-			if (!account?.address) throw new Error("Please connect Wallet");
-			const info = await readContract(config, {
-				abi: WASTE_CONTRACT_ABI,
-				address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
-				functionName: "getRecyclerRequests",
-				args: [requestId],
-			});
-			return info;
-		} catch (error) {
-			console.error("Error getting recycler requests", error);
-			throw new Error("Failed to get recycler offers ");
-		}
-	}, [requestId, account?.address]);
+	return useCallback(
+		async (requestId: bigint) => {
+			try {
+				if (!account?.address) throw new Error("Please connect Wallet");
+				const info = await readContract(config, {
+					abi: WASTE_CONTRACT_ABI,
+					address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+					functionName: "getRecyclerRequests",
+					args: [requestId],
+				});
+				return info;
+			} catch (error) {
+				console.error("Error getting recycler requests", error);
+				throw new Error("Failed to get recycler offers ");
+			}
+		},
+		[account?.address]
+	);
 };
 
 const useAcceptRequest = (requestId: bigint, collectorId: `0x${string}`, price: bigint) => {
@@ -82,6 +88,25 @@ const useGetRecyclerOffer = (recyclerAddress: `0x${string}`) => {
 	}, [recyclerAddress, account?.address]);
 };
 
+const useGetRecyclerCollectors = () => {
+	const account = useAccount();
+	return useCallback(async () => {
+		try {
+			if (!account?.address) throw new Error("Please connect Wallet");
+			const info = await readContract(config, {
+				abi: WASTE_CONTRACT_ABI,
+				address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+				functionName: "getRecyclerCollectors",
+				args: [account.address],
+			});
+			return info;
+		} catch (error) {
+			console.error("Error getting recycler offers :", error);
+			throw new Error("Failed to get recycler offers");
+		}
+	}, [account?.address]);
+};
+
 // function useAcceptRequest(requestId: bigint, collectorId: `0x${string}`) {
 // 	const { data: hash, isPending, writeContract } = useWriteContract();
 // 	const wagmiContractConfig = {
@@ -101,4 +126,4 @@ const useGetRecyclerOffer = (recyclerAddress: `0x${string}`) => {
 // 	};
 // }
 
-export { useRecyclerInfo, useRecyclerRequests, useAcceptRequest, useGetRecyclerOffer };
+export { useRecyclerRequests, useAcceptRequest, useGetRecyclerOffer, useGetRecyclerCollectors };

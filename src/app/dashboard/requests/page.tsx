@@ -1,31 +1,62 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
 import RequestDataTable from "@/components/dashboard/requestTable";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
-import { useRecyclerInfo, useRecyclerRequests } from "@/hooks/use--read-recyclers";
+import { useRecyclerRequests } from "@/hooks/use--read-recyclers";
+import { useReadRecyclers } from "@/hooks/use-get-recycler";
+import { Loader2 } from "lucide-react";
 
 const Page = () => {
-	const recyclerRequests = useRecyclerRequests(BigInt(1));
+	const recyclerRequests = useRecyclerRequests();
 	const [requests, setRequests] = useState(null || {});
 	const { address } = useAccount();
+	const [loading, setloading] = useState(false);
+	const getRecycler = useReadRecyclers();
 
 	// const { info: recyclerInfo } = useRecyclerInfo();
 
+	const fetchRecycleRequest = async () => {
+		setloading(true);
+		try {
+			const { id } = await getRecycler();
+
+			const recyclerRequest = await recyclerRequests(id);
+			// await getWasteTypes();
+			setRequests(recyclerRequest);
+
+			setloading(false);
+		} catch (error) {
+			console.error("An error occured while initializing", error);
+			// setError("An error occured while initializing");
+			setloading(false);
+			// throw new Error("An error occured while initializing")
+		}
+	};
+
 	useEffect(() => {
-		const fetchRequests = async () => {
-			const result = await recyclerRequests();
-			setRequests(result);
-			// console.log("send result", result);
-		};
-		fetchRequests();
-	}, [recyclerRequests]);
+		fetchRecycleRequest();
+		// fetchRequests();
+	}, [address]);
 
 	const serializeInfo = (data) => {
 		// Convert BigInt to string for serialization
 		return JSON.stringify(data, (key, value) => (typeof value === "bigint" ? value.toString() : value));
 	};
+
+	if (!address)
+		return (
+			<div className="w-full h-screen flex items-center justify-center">
+				<w3m-connect-button />
+			</div>
+		);
+	if (loading)
+		return (
+			<div className="w-full h-screen flex items-center justify-center">
+				<Loader2 className="animate-spin h-10 w-10" />
+			</div>
+		);
 
 	return (
 		<div className="px-10">

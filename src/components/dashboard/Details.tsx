@@ -97,15 +97,6 @@ const Details = ({ id, wasteType, quantity, latitude, longitude }: DetailsProps)
 						</div>
 					</div>
 				</div>
-				<SheetFooter>
-					<SheetClose asChild>
-						<Button
-							type="submit"
-							className="w-full h-[66px] bg-[#497E5D]">
-							Assign a collector
-						</Button>
-					</SheetClose>
-				</SheetFooter>
 			</SheetContent>
 		</Sheet>
 	);
