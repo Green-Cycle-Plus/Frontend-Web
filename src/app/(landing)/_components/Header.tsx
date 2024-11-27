@@ -21,9 +21,9 @@ const londrina = Londrina_Solid({
 
 const navigationItems = [
   { name: "Home", href: "/" },
+  { name: "Browse Offers", href: "/companies" },
   { name: "Register as a recycler", href: "/recyclers/register" },
   { name: "Contact us", href: "/contact" },
-  { name: "Blog", href: "/blog" },
 ];
 
 const Header = () => {
@@ -41,6 +41,9 @@ const Header = () => {
         <div className="hidden md:flex items-center space-x-8 font-dms_sans">
           <Link href="/" className="text-brandText font-medium">
             Home
+          </Link>
+	  <Link href="/companies" className="text-[#797979] hover:text-gray-900">
+            Browse Offers
           </Link>
           <Link href="/recyclers/register" className="text-[#797979] hover:text-gray-900">
             Register as a Recycler
