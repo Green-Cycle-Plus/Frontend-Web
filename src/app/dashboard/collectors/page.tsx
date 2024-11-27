@@ -25,10 +25,11 @@ import { WASTE_CONTRACT_ADDRESS } from "@/constants";
 import { useGetRecyclerCollectors } from "@/hooks/use-get-collectors";
 import { generateAbbreviation } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { writeContract } from "@wagmi/core";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { BadgeCheck, Plus, Trash2, UserCheck } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { useAccount, useWatchContractEvent } from "wagmi";
 import { z } from "zod";
 
@@ -104,6 +105,8 @@ export default function CollectorsPage() {
     },
   });
 
+ 
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setSubmitting(true);
     try {
@@ -113,9 +116,19 @@ export default function CollectorsPage() {
         functionName: "createCollector",
         args: [account.address as `0x${string}`, data.name, data.contact],
       });
-      console.log(result);
-      setIsOpen(false);
-      reset();
+      const transactionReceipt = await waitForTransactionReceipt(config, {
+        hash: result,
+      });
+      if (transactionReceipt.status === "success") {
+        toast.success("Colector created successfully");
+    
+        console.log(transactionReceipt);
+        reset();
+        setIsOpen(false);
+    
+        return transactionReceipt.transactionHash;
+      }
+   
     } catch (error) {
       console.error("Error creating collector onchain:", error);
     }finally{
@@ -173,7 +186,7 @@ export default function CollectorsPage() {
                 </div>
                 <div className="w-full items-center gap-4">
                   <Label htmlFor="address" className="text-right">
-                    Address
+                 Wallet   Address
                   </Label>
                   <Textarea
                     id="address"
@@ -250,7 +263,7 @@ export default function CollectorsPage() {
                 </span>
               </p>
             </CardContent>
-            <CardFooter className="flex justify-between p-4">
+            {/* <CardFooter className="flex justify-between p-4">
               <Button
                 variant="outline"
                 className="bg-white text-red-500 hover:text-red-600"
@@ -258,11 +271,11 @@ export default function CollectorsPage() {
                 <Trash2 className="w-4 h-4 mr-0.5" />
                 Remove
               </Button>
-              <Button variant="default" className="bg-black text-white">
+              <Button onClick={handleAssignCollector} variant="default" className="bg-black text-white">
                 <UserCheck className="w-4 h-4 mr-0.5" />
                 Assign
               </Button>
-            </CardFooter>
+            </CardFooter> */}
           </Card>
         ))}
       </div>

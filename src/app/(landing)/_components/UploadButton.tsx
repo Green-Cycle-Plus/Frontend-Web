@@ -115,8 +115,23 @@ const UploadButton = ({
   };
 
   async function handleSubmit() {
-    if (!weight || !selectedLocation || offerId < 0 || !recyclerId)
-      return toast.error("Missing fields, please fill in all fields...", { description: "If this error persists despite filling in all field, Please Refresh this page." });
+    if (
+      !weight ||
+      !selectedLocation ||
+      typeof offerId !== "number" ||
+      offerId < 0 ||
+      !recyclerId
+    )
+      return toast.error("Missing fields, please fill in all fields...", {
+        description:
+          "If this error persists despite filling in all field, Please Refresh this page.",
+      });
+    console.log({
+      weight,
+      selectedLocation,
+      offerId,
+      recyclerId,
+    });
 
     try {
       setSubmitting(true);
@@ -132,7 +147,7 @@ const UploadButton = ({
           BigInt(price),
           Number(parseUnits(`${selectedLocation.lat}`, 7)),
           Number(parseUnits(`${selectedLocation.lng}`, 7)),
-          lAddress
+          lAddress,
         ],
       });
 
