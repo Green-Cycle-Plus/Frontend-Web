@@ -1,30 +1,53 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
-import RequestDataTable from "@/components/userDashboard/requestTable";
+import RequestDataTable from "@/components/dashboard/requestTable";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
 import { useRecyclerRequests } from "@/hooks/use--read-recyclers";
+import { useReadRecyclers } from "@/hooks/use-get-recycler";
+import { Loader2 } from "lucide-react";
 
 const Page = () => {
-	// const recyclerRequests = useRecyclerRequests(BigInt(1));
+	const recyclerRequests = useRecyclerRequests();
 	const [requests, setRequests] = useState(null || {});
 	const { address } = useAccount();
-	// const { info: recyclerInfo } = useRecyclerInfo();
+	const [loading, setloading] = useState(false);
+	const getRecycler = useReadRecyclers();
 
-	// useEffect(() => {
-	// 	const fetchRequests = async () => {
-	// 		const result = await recyclerRequests();
-	// 		setRequests(result);
-	// 		console.log("send result", result);
-	// 	};
-	// 	fetchRequests();
-	// }, [recyclerRequests]);
+	const fetchRecycleRequest = async () => {
+		setloading(true);
+		try {
+			const { id } = await getRecycler();
 
-	const serializeInfo = (data) => {
-		// Convert BigInt to string for serialization
-		return JSON.stringify(data, (key, value) => (typeof value === "bigint" ? value.toString() : value));
+			const recyclerRequest = await recyclerRequests(id);
+			setRequests(recyclerRequest);
+
+			setloading(false);
+		} catch (error) {
+			console.error("An error occured while initializing", error);
+
+			setloading(false);
+		}
 	};
+
+	useEffect(() => {
+		fetchRecycleRequest();
+		// fetchRequests();
+	}, [address]);
+
+	if (!address)
+		return (
+			<div className="w-full h-screen flex items-center justify-center">
+				<w3m-connect-button />
+			</div>
+		);
+	if (loading)
+		return (
+			<div className="w-full h-screen flex items-center justify-center">
+				<Loader2 className="animate-spin h-10 w-10" />
+			</div>
+		);
 
 	return (
 		<div className="px-10">
@@ -44,8 +67,7 @@ const Page = () => {
 				</Button>{" "}
 				{/* Update to set info */}
 			</div>
-			{requests && <div>{serializeInfo(requests)}</div>}
-			{/* Display the info if it exists */}
+
 			<div>
 				<RequestDataTable requests={requests} />
 			</div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useRecyclerRequests, useAcceptRequest } from "@/hooks/use--read-recyclers";
 import { getAddressFromLatLng } from "@/lib/utils";
 
@@ -35,9 +35,6 @@ const Details = ({ id, wasteType, quantity, latitude, longitude }: DetailsProps)
 				</SheetHeader>
 				<div className="grid gap-4 py-4 space-y-3">
 					<div className="space-y-3">
-						{/* <h3 className="text-[#707070] ">Description</h3> */}
-						{/* <p className="text-sm">Lorem ipsum dolor sit amet consectetur. Morbi quis lorem massa sem platea auctor id molestie elit. Orci eget purus vitae volutpat eget lacus augue donec bibendum. Nunc a lacinia fames nunc tempus volutpat laoreet at ut. Non tellus ultrices orci ut.Lorem ipsum dolor sit amet consectetur. Morbi quis lorem massa sem platea auctor id molestie elit. Orci eget purus vitae volutpat eget lacus augue donec bibendum. Nunc a lacinia fames nunc tempus volutpat laoreet at ut. Non tellus ultrices orci ut.</p> */}
-
 						<div className="space-y-2">
 							<p>
 								<span className="text-[#757575] mr-1">Location:</span>

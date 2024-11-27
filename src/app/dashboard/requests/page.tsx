@@ -15,23 +15,19 @@ const Page = () => {
 	const [loading, setloading] = useState(false);
 	const getRecycler = useReadRecyclers();
 
-	// const { info: recyclerInfo } = useRecyclerInfo();
-
 	const fetchRecycleRequest = async () => {
 		setloading(true);
 		try {
 			const { id } = await getRecycler();
 
 			const recyclerRequest = await recyclerRequests(id);
-			// await getWasteTypes();
 			setRequests(recyclerRequest);
 
 			setloading(false);
 		} catch (error) {
 			console.error("An error occured while initializing", error);
-			// setError("An error occured while initializing");
+
 			setloading(false);
-			// throw new Error("An error occured while initializing")
 		}
 	};
 
@@ -39,11 +35,6 @@ const Page = () => {
 		fetchRecycleRequest();
 		// fetchRequests();
 	}, [address]);
-
-	const serializeInfo = (data) => {
-		// Convert BigInt to string for serialization
-		return JSON.stringify(data, (key, value) => (typeof value === "bigint" ? value.toString() : value));
-	};
 
 	if (!address)
 		return (
@@ -76,8 +67,7 @@ const Page = () => {
 				</Button>{" "}
 				{/* Update to set info */}
 			</div>
-			{requests && <div>{serializeInfo(requests)}</div>}
-			{/* Display the info if it exists */}
+
 			<div>
 				<RequestDataTable requests={requests} />
 			</div>
