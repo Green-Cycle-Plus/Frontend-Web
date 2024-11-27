@@ -32,7 +32,7 @@ const Rewards = () => {
           </div>
         </div>
         <div className='flex justify-center mt-5'>
-          <WeeklyStreak  />
+          <WeeklyStreak />
         </div>       
       </div>
       <div>

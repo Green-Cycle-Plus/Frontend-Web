@@ -10,7 +10,7 @@ import {
 import UploadImage from "../_components/UploadImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, Loader } from "lucide-react";
+import { HelpCircle, Loader2 } from "lucide-react";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { IoLocationOutline } from "react-icons/io5";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
@@ -115,14 +115,23 @@ const UploadButton = ({
   };
 
   async function handleSubmit() {
+    if (
+      !weight ||
+      !selectedLocation ||
+      typeof offerId !== "number" ||
+      offerId < 0 ||
+      !recyclerId
+    )
+      return toast.error("Missing fields, please fill in all fields...", {
+        description:
+          "If this error persists despite filling in all field, Please Refresh this page.",
+      });
     console.log({
       weight,
       selectedLocation,
       offerId,
       recyclerId,
-    })
-    if (!weight || !selectedLocation || typeof offerId !== "number"  || !recyclerId)
-      return toast.error("Missing fields, please fill in all fields...");
+    });
 
     try {
       setSubmitting(true);
@@ -133,8 +142,8 @@ const UploadButton = ({
         functionName: "makeRequest",
         args: [
           BigInt(recyclerId),
-          Number(offerId),
-          Number(weight),
+          offerId,
+          weight,
           BigInt(price),
           Number(parseUnits(`${selectedLocation.lat}`, 7)),
           Number(parseUnits(`${selectedLocation.lng}`, 7)),
@@ -250,14 +259,14 @@ const UploadButton = ({
                     Cancel
                   </Button>
                   <Button
-                    className="bg-[#228B22] text-white"
+                    className="bg-[#228B22] hover:bg-[#228B22]/80 text-white"
                     onClick={handleSubmit}
                     disabled={submitting}
                   >
                     {submitting ? (
                       <span className="flex items-center">
                         Making Request{" "}
-                        <Loader className="animate-spin w-3 h-3" />
+                        <Loader2 className="animate-spin w-3 h-3" />
                       </span>
                     ) : (
                       "Make Request"
