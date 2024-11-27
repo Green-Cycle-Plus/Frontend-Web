@@ -49,60 +49,6 @@ type BlockRequest = {
 	totalWasteCollectedInKgs: "0";
 };
 
-// type BlockRequest = {
-// 	id: number;
-
-// 	wasteType: string;
-
-// 	location: string;
-
-// 	userAddress: string;
-
-// 	recyclerAddress: string;
-
-// 	offerId: number;
-
-// 	weight: number;
-
-// 	valuedAt: number;
-
-// 	amountPaid: number;
-
-// 	isCompleted: boolean;
-
-// 	isAccepted: boolean;
-
-// 	assignedCollector: string;
-
-// 	escrowRequestID: number;
-
-// 	status: number;
-// };
-
-// export const requests: Request[] = [
-// 	{
-// 		id: "01",
-// 		type: "plastics",
-// 		quantity: 120,
-// 		location: "Wuse, Abuja",
-// 		status: "Pending",
-// 	},
-// 	{
-// 		id: "02",
-// 		type: "glass",
-// 		quantity: 400,
-// 		location: "Jabi, Abuja",
-// 		status: "Accepted",
-// 	},
-// 	{
-// 		id: "03",
-// 		type: "Paper",
-// 		quantity: 50,
-// 		location: "Lugbe, Abuja",
-// 		status: "Rejected",
-// 	},
-// ];
-
 interface Collector {
 	id: bigint;
 

@@ -43,33 +43,33 @@ interface IOffer {
 	recyclerId?: bigint;
 }
 const page = () => {
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  });
-  const [wasteType, setwasteTypes] = useState<WasteType[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [openModal, setopenModal] = useState(false);
-  const getRecycler = useReadRecyclers();
-  const getRecyclerOffers = useGetRecyclerOffers();
-  const [offers, setOffers] = useState<IOffer[]>([]);
-  const [loading, setloading] = useState(false);
-  const [error, setError]= useState("");
-const account   = useAccount()
+	const {
+		register,
+		setValue,
+		handleSubmit,
+		formState: { errors },
+		reset,
+	} = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+	});
+	const [wasteType, setwasteTypes] = useState<WasteType[]>([]);
+	const [submitting, setSubmitting] = useState(false);
+	const [openModal, setopenModal] = useState(false);
+	const getRecycler = useReadRecyclers();
+	const getRecyclerOffers = useGetRecyclerOffers();
+	const [offers, setOffers] = useState<IOffer[]>([]);
+	const [loading, setloading] = useState(false);
+	const [error, setError] = useState("");
+	const account = useAccount();
 
-  const fetchData = async () => {
-    setloading(true);
-    try {
-      const recycler = await getRecycler();
-  
-      const offerData = await getRecyclerOffers(recycler.id);
-      await getWasteTypes();
-      setOffers(offerData as IOffer[]);
+	const fetchData = async () => {
+		setloading(true);
+		try {
+			const recycler = await getRecycler();
+
+			const offerData = await getRecyclerOffers(recycler.id);
+			await getWasteTypes();
+			setOffers(offerData as IOffer[]);
 
 			setloading(false);
 		} catch (error) {
@@ -94,81 +94,84 @@ const account   = useAccount()
 	};
 	useEffect(() => {
 		fetchData();
-	}, [address]);
+	}, [account]);
 
-  useWatchContractEvent({
-    address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
-    abi: WASTE_CONTRACT_ABI,
-    eventName: "OfferCreated",
-    onLogs(logs) {
-      
-      console.log({logs})
-      const newOffer: IOffer = {
-        minQuantity: logs[0].args._miniQuantity!,
-        name: logs[0].args._wasteType!,
-        pricePerKg: logs[0].args._pricePerKg!,
-        recyclerAddress: logs[0].address!,
-      };
-      setOffers((prev) => [...prev, newOffer]);
-    },
-  });
+	useWatchContractEvent({
+		address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+		abi: WASTE_CONTRACT_ABI,
+		eventName: "OfferCreated",
+		onLogs(logs) {
+			console.log({ logs });
+			const newOffer: IOffer = {
+				minQuantity: logs[0].args._miniQuantity!,
+				name: logs[0].args._wasteType!,
+				pricePerKg: logs[0].args._pricePerKg!,
+				recyclerAddress: logs[0].address!,
+			};
+			setOffers((prev) => [...prev, newOffer]);
+		},
+	});
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setSubmitting(true);
-    try {
-      const result = await writeContract(config, {
-        abi: WASTE_CONTRACT_ABI,
-        address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
-        functionName: "createOffer",
-        args: [data.waste_type, BigInt(data.price), BigInt(data.quantity)],
-      });
-      const transactionReceipt = await waitForTransactionReceipt(config, {
-        hash: result,
-      });
-      if (transactionReceipt.status === "success") {
-        toast.success("Offer created successfully");
-        reset();
-        setopenModal(false)
-        return transactionReceipt.transactionHash;
-      }
- 
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-  if(!account.address) return <div className="w-full h-screen flex items-center justify-center">
- <w3m-connect-button/>
-</div>
-  if (loading)
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin h-10 w-10" />
-      </div>
-    );
-  return (
-    <div className="px-10">
-      <div className="flex items-center justify-between w-full">
-        <h1 className="text-3xl font-bold mb-6 text-[#228B22]">Offers</h1>
+	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+		setSubmitting(true);
+		try {
+			const result = await writeContract(config, {
+				abi: WASTE_CONTRACT_ABI,
+				address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
+				functionName: "createOffer",
+				args: [data.waste_type, BigInt(data.price), BigInt(data.quantity)],
+			});
+			const transactionReceipt = await waitForTransactionReceipt(config, {
+				hash: result,
+			});
+			if (transactionReceipt.status === "success") {
+				toast.success("Offer created successfully");
+				reset();
+				setopenModal(false);
+				return transactionReceipt.transactionHash;
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setSubmitting(false);
+		}
+	};
+	if (!account.address)
+		return (
+			<div className="w-full h-screen flex items-center justify-center">
+				<w3m-connect-button />
+			</div>
+		);
+	if (loading)
+		return (
+			<div className="w-full h-screen flex items-center justify-center">
+				<Loader2 className="animate-spin h-10 w-10" />
+			</div>
+		);
+	return (
+		<div className="px-10">
+			<div className="flex items-center justify-between w-full">
+				<h1 className="text-3xl font-bold mb-6 text-[#228B22]">Offers</h1>
 
 				{/* <Button>
 					Add <Plus />
 				</Button> */}
-        <Dialog open={openModal} onOpenChange={setopenModal}>
-          <DialogTrigger asChild>
-            <Button>
-              Add <Plus />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="w-full">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <DialogHeader>
-                <DialogTitle>Add new Offer</DialogTitle>
-                {/* <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription> */}
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                {/* <div className="grid gap-4">
+				<Dialog
+					open={openModal}
+					onOpenChange={setopenModal}>
+					<DialogTrigger asChild>
+						<Button>
+							Add <Plus />
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="w-full">
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<DialogHeader>
+								<DialogTitle>Add new Offer</DialogTitle>
+								{/* <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription> */}
+							</DialogHeader>
+							<div className="grid gap-4 py-4">
+								{/* <div className="grid gap-4">
 								<Label
 									htmlFor="title"
 									className="">
@@ -271,15 +274,15 @@ const account   = useAccount()
 				</Dialog>
 			</div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {offers.length > 0 ? (
-          offers.map((offer) => (
-            <Card key={offer.offerId}>
-              <CardHeader className="flex-row w-full justify-between">
-                <CardTitle>
-                  {Number(offer.minQuantity.toString())}kg Of {offer.name}
-                </CardTitle>
-                {/* <CardDescription className="text-xl">Requests </CardDescription> */}
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				{offers.length > 0 ? (
+					offers.map((offer) => (
+						<Card key={offer.offerId}>
+							<CardHeader className="flex-row w-full justify-between">
+								<CardTitle>
+									{Number(offer.minQuantity.toString())}kg Of {offer.name}
+								</CardTitle>
+								{/* <CardDescription className="text-xl">Requests </CardDescription> */}
 
 								<EllipsisVertical />
 							</CardHeader>

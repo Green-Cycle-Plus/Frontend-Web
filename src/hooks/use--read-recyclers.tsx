@@ -5,28 +5,6 @@ import { readContract, writeContract } from "@wagmi/core";
 import { useCallback } from "react";
 import { useAccount } from "wagmi";
 
-// const useRecyclerInfo = (requestId: bigint) => {
-// 	const account = useAccount();
-// 	return useCallback(
-// 		async (requestId: bigint) => {
-// 			try {
-// 				if (!account?.address) throw new Error("Please connect Wallet");
-// 				const info = await readContract(config, {
-// 					abi: WASTE_CONTRACT_ABI,
-// 					address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
-// 					functionName: "getRecyclerById",
-// 					args: [requestId],
-// 				});
-// 				return info;
-// 			} catch (error) {
-// 				console.error("Error getting recycler info", error);
-// 				throw new Error("Failed to get recycler info");
-// 			}
-// 		},
-// 		[requestId, account?.address]
-// 	);
-// };
-
 const useRecyclerRequests = () => {
 	const account = useAccount();
 	return useCallback(
