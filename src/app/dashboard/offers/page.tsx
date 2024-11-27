@@ -41,6 +41,7 @@ import { useGetRecyclerOffers } from "@/hooks/use-get-offers";
 import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { useAccount, useWatchContractEvent } from "wagmi";
+import { toast } from "sonner";
 const formSchema = z.object({
   waste_type: z.string().min(1, {
     message: "Waste type must be at least 1 characters",
@@ -72,6 +73,7 @@ const page = () => {
   });
   const [wasteType, setwasteTypes] = useState<WasteType[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [openModal, setopenModal] = useState(false);
   const getRecycler = useReadRecyclers();
   const getRecyclerOffers = useGetRecyclerOffers();
   const [offers, setOffers] = useState<IOffer[]>([]);
@@ -84,7 +86,7 @@ const account   = useAccount()
     try {
       const recycler = await getRecycler();
   
-      const offerData = await getRecyclerOffers(recycler[0]);
+      const offerData = await getRecyclerOffers(recycler.id);
       await getWasteTypes();
       setOffers(offerData as IOffer[]);
 
@@ -122,11 +124,13 @@ const account   = useAccount()
     abi: WASTE_CONTRACT_ABI,
     eventName: "OfferCreated",
     onLogs(logs) {
+      
+      console.log({logs})
       const newOffer: IOffer = {
         minQuantity: logs[0].args._miniQuantity!,
         name: logs[0].args._wasteType!,
         pricePerKg: logs[0].args._pricePerKg!,
-        recyclerAddress: logs[0].args.recycler!,
+        recyclerAddress: logs[0].address!,
       };
       setOffers((prev) => [...prev, newOffer]);
     },
@@ -145,9 +149,12 @@ const account   = useAccount()
         hash: result,
       });
       if (transactionReceipt.status === "success") {
+        toast.success("Offer created successfully");
+        reset();
+        setopenModal(false)
         return transactionReceipt.transactionHash;
       }
-      reset();
+ 
     } catch (error) {
       console.error(error);
     } finally {
@@ -171,7 +178,7 @@ const account   = useAccount()
         {/* <Button>
 					Add <Plus />
 				</Button> */}
-        <Dialog>
+        <Dialog open={openModal} onOpenChange={setopenModal}>
           <DialogTrigger asChild>
             <Button>
               Add <Plus />
@@ -299,7 +306,7 @@ const account   = useAccount()
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {offers.length > 0 ? (
           offers.map((offer) => (
-            <Card>
+            <Card key={offer.offerId}>
               <CardHeader className="flex-row w-full justify-between">
                 <CardTitle>
                   {Number(offer.minQuantity.toString())}kg Of {offer.name}

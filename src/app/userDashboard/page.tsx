@@ -1,38 +1,86 @@
 "use client";
-import React from "react";
-import Image from "next/image";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import DataTableColumn from "@/components/dashboard/dataTable";
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { EllipsisVertical } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect } from "react";
 
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { WASTE_CONTRACT_ABI } from "@/abi/wasteContractAbi";
 import UserGradesTable from "@/components/dashboard/userDataTable";
+import { WASTE_CONTRACT_ADDRESS } from "@/constants";
+import { useGetRole } from "@/hooks/use-get-role";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
+import { useRouter } from "next/navigation";
+import { useAccount, useReadContract } from "wagmi";
+import { IRequest } from "../dashboard/page";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const page = () => {
-	const data = {
-		labels: ["Accepted", "Pending", "Rejected"],
-		datasets: [
-			{
-				label: "Waste Status",
-				data: [2500, 1500, 500],
-				backgroundColor: ["#37D837", "#F3FF0E", "#FF0E0E"],
-				hoverOffset: 4,
-			},
-		],
-	};
+const page =  () => {
+	const { data: role, isLoading:roleLoading } = useGetRole();
+	const router = useRouter();
+	const account = useAccount();
+	const { data:user, isLoading:userLoaading, isError:isUserError, error:userError } = useReadContract({
+		abi: WASTE_CONTRACT_ABI,
+		address: WASTE_CONTRACT_ADDRESS	 as `0x${string}`,
+		functionName: "getUser",
+		args: [account.address as `0x${string}`],
+	  });
+	const { data:requests, isLoading, isError, error, } = useReadContract({
+		abi: WASTE_CONTRACT_ABI,
+		address: WASTE_CONTRACT_ADDRESS	 as `0x${string}`,
+		functionName: "getAllUserRequests",
+		args: [account.address as `0x${string}`],
 
-	// const options = {
-	// 	plugins: {
-	// 		legend: {
-	// 			position: "bottom",
-	// 		},
-	// 	},
-	// };
+	  });
 	
+	
+	
+	useEffect(() => {
+		if (role) {
+		  if (role[0] !== "User") router.push("/");
+	
+	
+		}
+	  }, [role]);
+	  if(!account.address) return <div className="w-full h-screen flex items-center justify-center">
+	  <w3m-connect-button/>
+	 </div>
+	  if(roleLoading || userLoaading || isLoading ) return (
+		<div className="w-full h-screen flex items-center justify-center">
+		  <Loader2 className="animate-spin h-10 w-10" />
+		</div>
+	  );
+	//   const activeRequests =
+	//   requests?.filter((request) => request.status === 1) ?? [];
+	// const pendingRequests =
+	//   requests?.filter((request) => request.status === 0) ?? [];
+	// const rejectedRequests =
+	//   requests?.filter((request) => request.status === 2) ?? [];
+	// const acceptedRequests =
+	//   requests?.filter((request) => request.isAccepted) ?? [];
+	// const data = {
+	//   labels: ["Accepted", "Pending", "Rejected"],
+	//   datasets: [
+	// 	{
+	// 	  label: "Waste Status",
+	// 	  data: [
+	// 		acceptedRequests.length,
+	// 		pendingRequests.length,
+	// 		rejectedRequests.length,
+	// 	  ],
+	// 	  backgroundColor: ["#37D837", "#F3FF0E", "#FF0E0E"],
+	// 	  hoverOffset: 4,
+	// 	},
+	//   ],
+	// };
+	  
+
+
+	
+
+
+
 	return (
 		<div className="pb-5 px-10">
 			<div className="flex w-full justify-between">
@@ -48,19 +96,19 @@ const page = () => {
 			<div className="grid grid-cols-3 gap-4 mt-4">
 				<DashboardCard
 					description="Total Waste Submitted"
-					title="2500 kg"
+					title={`${user?.totalWasteSubmited} kg`}
 					image="/processed.svg"
 					percent="29"
 				/>
 				<DashboardCard
 					description="Reward Balances"
-					title="$47,887.89"
+					title={`$${user?.totalReward}`}
 					image="/revenue.svg"
 					percent="59"
 				/>
 				<DashboardCard
 					description="Eco-market purchases"
-					title="200"
+					title="10"
 					image="/profile-2green.svg"
 					percent="100"
 				/>
@@ -77,7 +125,7 @@ const page = () => {
 							height={25}
 						/>
 					</div>
-					<DataTableColumn />
+					<DataTableColumn requests={requests as IRequest[]} />
 				</div>
 				<div className="col-span-2 mt-5">
 					<div className="flex w-full justify-between pb-5">
