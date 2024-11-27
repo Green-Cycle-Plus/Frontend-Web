@@ -51,9 +51,9 @@ const Header = () => {
 {/*           <Link href="/contact" className="text-[#797979] hover:text-gray-900">
             Contact us
           </Link> */}
-          <Link href="/blog" className="text-[#797979] hover:text-gray-900">
+          {/* <Link href="/blog" className="text-[#797979] hover:text-gray-900">
             Blog
-          </Link>
+          </Link> */}
         </div>
 
         {isConnected ? <Button className="bg-[#228B22] text-white px-0 py-5 rounded-[24px] font-semibold text-base font-dms_sans hover:bg-green-700 transition-colors"><w3m-account-button balance="hide"/> </Button>: <w3m-connect-button/>}
