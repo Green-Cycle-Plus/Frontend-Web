@@ -116,7 +116,7 @@ const UploadButton = ({
 
   async function handleSubmit() {
     if (!weight || !selectedLocation || !offerId || !recyclerId)
-      return toast.error("Missing fields, please fill in all fields...");
+      return toast.error("Missing fields, please fill in all fields...", { description: "If this error persists despite filling in all field, Please Refresh this page." });
 
     try {
       setSubmitting(true);
@@ -127,11 +127,12 @@ const UploadButton = ({
         functionName: "makeRequest",
         args: [
           BigInt(recyclerId),
-          BigInt(offerId),
-          BigInt(weight),
+          offerId,
+          weight,
           BigInt(price),
           Number(parseUnits(`${selectedLocation.lat}`, 7)),
           Number(parseUnits(`${selectedLocation.lng}`, 7)),
+          lAddress
         ],
       });
 

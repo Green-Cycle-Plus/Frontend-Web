@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import WasteRequestsContainer from "../_components/waste-request-container";
+import { WasteRequests } from "@/app/recyclers/_components/waste-requests";
 
 export default function AssignedRequestsPage() {
-  return <WasteRequestsContainer/>;
+  return <WasteRequests/>;
 }
