@@ -1,29 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useRecyclerRequests, useAcceptRequest } from "@/hooks/use--read-recyclers";
-import { getAddressFromLatLng } from "@/lib/utils";
 
 interface DetailsProps {
 	id: string;
-	wasteType: string;
+	type: string;
 	quantity: number;
-	latitude: number;
-	longitude: number;
+	location: string;
+	status: string;
 }
 
-const Details = ({ id, wasteType, quantity, latitude, longitude }: DetailsProps) => {
-	// const recyclerRequests = useRecyclerRequests(BigInt(1));
-	const collectorId = "0x1e5c761ef5BE9cf007596262F2A447D46e49d9aa";
-	// const address = await getAddressFromLatLng(latitude, longitude);
-	const acceptRequest = useAcceptRequest(BigInt(id), collectorId);
-
-	const [address, setAddress] = useState<string>("");
-
-	useEffect(() => {
-		getAddressFromLatLng(latitude, longitude).then((result) => setAddress(result));
-	}, [latitude, longitude]);
+const Details = ({ id, type, quantity, location, status }: DetailsProps) => {
 	return (
 		<Sheet>
 			<SheetTrigger asChild>
@@ -41,14 +29,14 @@ const Details = ({ id, wasteType, quantity, latitude, longitude }: DetailsProps)
 						<div className="space-y-2">
 							<p>
 								<span className="text-[#757575] mr-1">Location:</span>
-								{address}
+								{location}
 							</p>
 							<p>
 								<span className="text-[#757575]">Quantity:</span>
 								{quantity}kg
 							</p>
 							<p className="text-[#757575]">
-								Waste type: <Button className="rounded-full bg-[#228B22]">{wasteType}</Button>
+								Waste type: <Button className="rounded-full bg-[#228B22]">{type}</Button>
 							</p>
 						</div>
 					</div>
@@ -82,29 +70,28 @@ const Details = ({ id, wasteType, quantity, latitude, longitude }: DetailsProps)
 							/>
 							<p className="text-[#6F6F6F] text-sm">Help center</p>
 						</div>
-						<div className="space-x-2">
+						{/* <div className="space-x-2">
 							<Button
 								type="submit"
 								variant={"outline"}
 								className="text-red-500">
 								Reject
 							</Button>
-							<Button
-								type="submit"
-								onClick={() => acceptRequest()}>
-								Accept{" "}
-							</Button>
-						</div>
+							<Button type="submit">Accept </Button>
+						</div> */}
 					</div>
 				</div>
 				<SheetFooter>
-					<SheetClose asChild>
-						<Button
-							type="submit"
-							className="w-full h-[66px] bg-[#497E5D]">
-							Assign a collector
-						</Button>
-					</SheetClose>
+					{status === "Pending" && (
+						<SheetClose asChild>
+							<Button
+								type="submit"
+								variant={"outline"}
+								className="text-red-500">
+								Cancel
+							</Button>
+						</SheetClose>
+					)}
 				</SheetFooter>
 			</SheetContent>
 		</Sheet>

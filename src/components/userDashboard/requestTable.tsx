@@ -1,77 +1,49 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Details from "./Details";
-import { getAddressFromLatLng } from "@/lib/utils";
+import Details from "../userDashboard/Details";
 
-import { useAcceptRequest } from "@/hooks/use--read-recyclers";
-// import { useGetRecyclerOffer } from "@/hooks/use--read-recyclers";
-const collectorId = "0x580626a35D4DAb957c800F2e9e3e853D2E94D010";
-
-function useAddress(lat: number, lng: number) {
-	const [address, setAddress] = useState<string>("");
-
-	useEffect(() => {
-		getAddressFromLatLng(lat, lng).then((result) => setAddress(result));
-	}, [lat, lng]);
-
-	return address;
-}
-
-type BlockRequest = {
-	wasteType: string;
-	id: number;
-	escrowRequestID: string;
-	amountPaid: string;
-	weight: number;
-	valuedAt: string;
-	offerId: number;
-	longitude: number;
-	latitude: number;
-	userAddress: string;
-	isCompleted: boolean;
-	status: number;
-	recyclerAddress: string;
-	assignedCollector: string;
-	isAccepted: boolean;
-	totalWasteRequest: string;
-	totalAmountSpent: string;
-	totalWasteCollectedInKgs: "0";
+type Request = {
+	id: string;
+	type: string;
+	quantity: number;
+	location: string;
+	status: "Accepted" | "Pending" | "Rejected";
 };
 
-// type BlockRequest = {
-// 	id: number;
+type BlockRequest = {
+	id: number;
 
-// 	wasteType: string;
+	type: string;
 
-// 	location: string;
+	location: string;
 
-// 	userAddress: string;
+	userAddress: string;
 
-// 	recyclerAddress: string;
+	recyclerAddress: string;
 
-// 	offerId: number;
+	offerId: number;
 
-// 	weight: number;
+	weight: number;
 
-// 	valuedAt: number;
+	valuedAt: number;
 
-// 	amountPaid: number;
+	amountPaid: number;
 
-// 	isCompleted: boolean;
+	isCompleted: boolean;
 
-// 	isAccepted: boolean;
+	isAccepted: boolean;
 
-// 	assignedCollector: string;
+	assignedCollector: string;
 
-// 	escrowRequestID: number;
+	escrowRequestID: number;
 
-// 	status: number;
-// };
+	status: number;
+};
 
 // export const requests: Request[] = [
 // 	{
@@ -97,35 +69,6 @@ type BlockRequest = {
 // 	},
 // ];
 
-function ActionButtons({ id, valueAt }: { id: number; valueAt: bigint }) {
-	const acceptRequest = useAcceptRequest(BigInt(id), collectorId, valueAt);
-	return (
-		<div className="text-sm space-x-3">
-			<Button
-				className="text-red-500"
-				variant={"outline"}>
-				Reject
-			</Button>
-			<Button onClick={() => acceptRequest()}>Accept</Button>
-		</div>
-	);
-}
-
-// function LocationCell({ lat, lng }: { lat: number; lng: number }) {
-// 	const [address, setAddress] = useState<string>("");
-
-// 	useEffect(() => {
-// 		getAddressFromLatLng(lat, lng).then((result) => setAddress(result));
-// 	}, [lat, lng]);
-
-// 	return <div>{address || "Loading..."}</div>;
-// }
-
-function LocationCell({ lat, lng }: { lat: number; lng: number }) {
-	const address = useAddress(lat, lng);
-	return <div>{address || "Loading..."}</div>;
-}
-
 export const columns: ColumnDef<BlockRequest>[] = [
 	{
 		accessorKey: "id",
@@ -134,9 +77,6 @@ export const columns: ColumnDef<BlockRequest>[] = [
 	{
 		accessorKey: "type",
 		header: "Type",
-		cell: ({ row }) => {
-			return <div>{row.original.wasteType}</div>;
-		},
 	},
 	{
 		accessorKey: "weight",
@@ -145,15 +85,6 @@ export const columns: ColumnDef<BlockRequest>[] = [
 	{
 		accessorKey: "location",
 		header: "Location",
-		cell: ({ row }) => {
-			return (
-				<LocationCell
-					lat={row.original.latitude}
-					lng={row.original.longitude}
-				/>
-				// <div>key</div>
-			);
-		},
 	},
 	{
 		accessorKey: "Status",
@@ -177,10 +108,15 @@ export const columns: ColumnDef<BlockRequest>[] = [
 		header: () => <div className="text-left">Actions</div>,
 		cell: ({ row }) => {
 			return (
-				<ActionButtons
-					id={row.original.id}
-					valueAt={BigInt(row.original.valuedAt)}
-				/>
+				<div className="text-sm space-x-3">
+					{row.original.status === 0 && (
+						<Button
+							className="text-red-500"
+							variant={"outline"}>
+							Cancel
+						</Button>
+					)}
+				</div>
 			);
 		},
 	},
@@ -191,21 +127,15 @@ export const columns: ColumnDef<BlockRequest>[] = [
 			return (
 				<Details
 					id={row.original.id.toString()}
-					wasteType={row.original.wasteType || "Plastic"} //type={row.original.wasteType || "Plastic"}
+					type={row.original.type || "Plastic"}
 					quantity={row.original.weight}
-					latitude={row.original.latitude}
-					longitude={row.original.longitude}
+					location={row.original.location || "Lagos"}
+					status={row.original.status === 0 ? "Pending" : row.original.status === 1 ? "Accepted" : row.original.status === 2 ? "Completed" : "Cancelled"}
 				/>
 			);
 		},
 	},
 ];
-
-// const dataTable = () => {
-// 	return <div>dataTable</div>;
-// };
-
-// export default dataTable;
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];

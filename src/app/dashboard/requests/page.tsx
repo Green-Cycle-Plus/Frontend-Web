@@ -7,36 +7,20 @@ import { useAccount } from "wagmi";
 import { useRecyclerInfo, useRecyclerRequests } from "@/hooks/use--read-recyclers";
 
 const Page = () => {
+	const recyclerRequests = useRecyclerRequests(BigInt(1));
 	const [requests, setRequests] = useState(null || {});
 	const { address } = useAccount();
-	const { info: recyclerInfo } = useRecyclerInfo();
-	const { requests: recyclerRequests } = useRecyclerRequests();
+
+	// const { info: recyclerInfo } = useRecyclerInfo();
 
 	useEffect(() => {
-		// if (recyclerInfo) {
-		// 	setInfo(recyclerInfo);
-		// 	console.log({ ...recyclerInfo }, "address");
-
-		// 	// Check if the connected address matches the recycler's address
-		// 	if (address && recyclerInfo?.recyclerAddress === address) {
-		// 		console.log("Connected address matches the recycler's address.");
-		// 	} else {
-		// 		console.log("Connected address does not match the recycler's address.");
-		// 	}
-		// }
-
-		if (recyclerRequests) {
-			setRequests(recyclerRequests);
-			console.log({ ...recyclerRequests }, "address");
-
-			// Check if the connected address matches the recycler's address
-			// if (address && recyclerInfo?.recyclerAddress === address) {
-			// 	console.log("Connected address matches the recycler's address.");
-			// } else {
-			// 	console.log("Connected address does not match the recycler's address.");
-			// }
-		}
-	}, [recyclerRequests, address]);
+		const fetchRequests = async () => {
+			const result = await recyclerRequests();
+			setRequests(result);
+			// console.log("send result", result);
+		};
+		fetchRequests();
+	}, [recyclerRequests]);
 
 	const serializeInfo = (data) => {
 		// Convert BigInt to string for serialization
@@ -53,12 +37,12 @@ const Page = () => {
 					width={30}
 					height={30}
 				/>
-				{/* <Button
+				<Button
 					onClick={() => {
-						setInfo(recyclerInfo);
+						setRequests(recyclerRequests);
 					}}>
 					Request Recycler
-				</Button>{" "} */}
+				</Button>{" "}
 				{/* Update to set info */}
 			</div>
 			{requests && <div>{serializeInfo(requests)}</div>}
