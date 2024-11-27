@@ -133,11 +133,12 @@ const UploadButton = ({
         functionName: "makeRequest",
         args: [
           BigInt(recyclerId),
-          BigInt(offerId),
-          BigInt(weight),
+          Number(offerId),
+          Number(weight),
           BigInt(price),
           Number(parseUnits(`${selectedLocation.lat}`, 7)),
           Number(parseUnits(`${selectedLocation.lng}`, 7)),
+          lAddress,
         ],
       });
 
