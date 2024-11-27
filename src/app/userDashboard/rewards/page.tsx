@@ -74,7 +74,7 @@ const Rewards = () => {
           </div>
         </div>
         <div className='flex justify-center mt-5'>
-          <WeeklyStreak streak={streak} />
+          <WeeklyStreak />
         </div>       
       </div>
       <div>
