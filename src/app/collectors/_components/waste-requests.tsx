@@ -16,59 +16,6 @@ import { CheckCircle } from "lucide-react";
 import RequestDetails from "./request-details";
 import RaiseIssueDialog from "./raise-issue-dialog";
 
-const requests = [
-  {
-    id: 1,
-    address: "123 Green St",
-    wasteType: "Plastic",
-    quantity: 50,
-    status: "Pending",
-    urgency: "Low",
-    lat: 4.789892,
-    lng: 3.995342,
-  },
-  {
-    id: 2,
-    address: "456 Eco Ave",
-    wasteType: "Paper",
-    quantity: 30,
-    status: "In Progress",
-    urgency: "Medium",
-    lat: 4.789892,
-    lng: 3.995342,
-  },
-  {
-    id: 3,
-    address: "789 Recycle Rd",
-    wasteType: "Metal",
-    quantity: 100,
-    status: "Pending",
-    urgency: "High",
-    lat: 6.789892,
-    lng: 4.355342,
-  },
-  {
-    id: 4,
-    address: "321 Clean Ln",
-    wasteType: "Glass",
-    quantity: 40,
-    status: "Completed",
-    urgency: "Low",
-    lat: 6.789892,
-    lng: 2.995342,
-  },
-  {
-    id: 5,
-    address: "654 Sustain Blvd",
-    wasteType: "Organic",
-    quantity: 75,
-    status: "Pending",
-    urgency: "Medium",
-    lat: 3.789892,
-    lng: 6.295342,
-  },
-];
-
 export const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "pending":
@@ -77,19 +24,6 @@ export const getStatusColor = (status: string) => {
       return "bg-blue-100 text-blue-800";
     case "completed":
       return "bg-green-100 text-green-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
-export const getUrgencyColor = (urgency: string) => {
-  switch (urgency.toLowerCase()) {
-    case "low":
-      return "bg-green-100 text-green-800";
-    case "medium":
-      return "bg-yellow-100 text-yellow-800";
-    case "high":
-      return "bg-red-100 text-red-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -106,23 +40,11 @@ export type Request = {
   lng: number;
 };
 
-export default function WasteRequests() {
+export default function WasteRequests({requests}:{requests: Request[]}) {
   const confirmRequest = (id: number) => {
     console.log(`Confirmed request ${id}`);
     toast.success(`Confirmed request ${id}`);
     // Here you would update the request status
-  };
-
-  const getAddressFromLatLng = async (lat: number, lng: number) => {
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}`;
-
-    const response = await fetch(geocodeUrl);
-    const data = await response.json();
-
-    if (data.results && data.results.length > 0) {
-      return data.results[0].formatted_address;
-    }
-    return "Address not found";
   };
 
   return (
@@ -134,7 +56,6 @@ export default function WasteRequests() {
             <TableHead>Waste Type</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Urgency</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -142,8 +63,7 @@ export default function WasteRequests() {
           {requests.map((request) => (
             <TableRow key={request.id}>
               <TableCell>
-                {getAddressFromLatLng(request.lat, request.lng) ||
-                  request.address}
+                {request.address}
               </TableCell>
               <TableCell>{request.wasteType}</TableCell>
               <TableCell>{request.quantity} kg</TableCell>
@@ -153,12 +73,8 @@ export default function WasteRequests() {
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge className={getUrgencyColor(request.urgency)}>
-                  {request.urgency}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
+                <div className="flex space-x-6">
+                  <RequestDetails request={request} />
                   <Button
                     size="sm"
                     onClick={() => confirmRequest(request.id)}
@@ -168,7 +84,6 @@ export default function WasteRequests() {
                     Confirm
                   </Button>
                   <RaiseIssueDialog request={request} />
-                  <RequestDetails request={request} />
                 </div>
               </TableCell>
             </TableRow>
