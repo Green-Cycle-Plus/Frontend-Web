@@ -114,7 +114,7 @@ export default function CollectorsPage() {
         abi: WASTE_CONTRACT_ABI,
         address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createCollector",
-        args: [account.address as `0x${string}`, data.name, data.contact],
+        args: [data.address as `0x${string}`, data.name, data.contact],
       });
       const transactionReceipt = await waitForTransactionReceipt(config, {
         hash: result,

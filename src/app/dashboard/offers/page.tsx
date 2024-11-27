@@ -42,6 +42,7 @@ import { useReadRecyclers } from "@/hooks/use-get-recycler";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { useAccount, useWatchContractEvent } from "wagmi";
 import { toast } from "sonner";
+import { formatEther, parseEther } from "viem";
 const formSchema = z.object({
   waste_type: z.string().min(1, {
     message: "Waste type must be at least 1 characters",
@@ -143,7 +144,7 @@ const account   = useAccount()
         abi: WASTE_CONTRACT_ABI,
         address: WASTE_CONTRACT_ADDRESS as `0x${string}`,
         functionName: "createOffer",
-        args: [data.waste_type, BigInt(data.price), BigInt(data.quantity)],
+        args: [data.waste_type, parseEther(data.price), BigInt(data.quantity)],
       });
       const transactionReceipt = await waitForTransactionReceipt(config, {
         hash: result,
@@ -230,7 +231,7 @@ const account   = useAccount()
 
                   <div className="grid gap-4 mt-4 w-full">
                     <Label htmlFor="quantity" className="">
-                      Quantity
+                     Min Quantity
                     </Label>
                     <Input
                       id="quantity"
@@ -240,7 +241,7 @@ const account   = useAccount()
                         required: "Quantity is required",
                       })}
                       className="col-span-3 w-full"
-                      placeholder="Enter price"
+                      placeholder="8 KG"
                     />
                     {errors.quantity && (
                       <p className="text-red-500 text-sm ">{`${errors.quantity.message}`}</p>
@@ -318,7 +319,7 @@ const account   = useAccount()
               <CardContent>
                 <p>
                   <span className="text-[#757575]">Price:</span>{" "}
-                  {Number(offer.pricePerKg.toString())} Eth per KG
+                  {formatEther(offer.pricePerKg)} Eth per KG
                 </p>
                 <p>
                   <span className="text-[#757575]">Recycler Address: </span>

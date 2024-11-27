@@ -1,46 +1,4 @@
-// import WeeklyStreak from '@/app/(landing)/_components/Streak'
-// import { Button } from '@/components/ui/button'
-// import React from 'react'
-
-// const Rewards = () => {
-//   return (
-//     <div className='ml-5'>
-//       <div>
-//       <h1 className="text-4xl text-[#285528]">Rewards</h1>
-//       </div>
-//       <div className='shadow-lg w-[500px] mt-10'>
-//         <h1 className='font-bold p-5 mt-5'>Streak</h1>
-//         <div className='flex justify-center'>
-//         <img src='/fire.svg' height={90} width={90} alt='fire' className='mt-5' />
-//         </div>
-//         <div className='flex justify-center'>
-//             <div>
-//          <h1 className='flex justify-center text-4xl font-bold mt-5'>3</h1>
-//         <h1 className='flex justify-center text-gray-600 mt-2'>Days Streak</h1> 
-//         </div>
-
-//         </div>
-//         <div className='flex justify-center mt-5'>
-//             <WeeklyStreak />
-//         </div>       
-//       </div>
-//       <div>
-//         <Button className='w-[500px] mt-5 h-16'>Claim Streak</Button>
-//       </div>
-//       <div>
-//         <h1>Badges</h1>
-//         <div>
-//           <img src='/badge.png' height={100} width={200} alt='badge' />
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Rewards
-
 "use client"
-
 import { useState } from "react"
 import WeeklyStreak from '@/app/(landing)/_components/Streak'
 import { Button } from '@/components/ui/button'
