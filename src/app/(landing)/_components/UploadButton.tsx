@@ -115,7 +115,7 @@ const UploadButton = ({
   };
 
   async function handleSubmit() {
-    if (!weight || !selectedLocation || !offerId || !recyclerId)
+    if (!weight || !selectedLocation || offerId < 0 || !recyclerId)
       return toast.error("Missing fields, please fill in all fields...", { description: "If this error persists despite filling in all field, Please Refresh this page." });
 
     try {
